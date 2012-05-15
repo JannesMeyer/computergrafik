@@ -5,58 +5,57 @@ using namespace std;
 
 Interpolation::Interpolation() {
 	// Create an empty points vector
-	points = vector<Vec3>();
-	numCoordinates = 0;
+	x = vector<double>();
+	y = vector<double>();
+	z = vector<double>();
 }
-
-Interpolation::Interpolation(vector<Vec3> points) : points(points) {
-	numCoordinates = points.size();
-}
-
 
 Interpolation::~Interpolation(void) {
 }
 
-void Interpolation::add(double x, double y, double z) {
-	// Is this the first element added?
-	if (points.empty()) {
-		numCoordinates = 3;
-	} else if (numCoordinates != 3) {
-		throw runtime_error("Number of elements of the appended vector does not match");
-	}
-	// Append the point as Vec3
-	points.push_back(Vec3(x, y, z));
+double Interpolation::lagrangePolynom(int i) {
+	int n = x.size();
+	double tStep = 1.0 / n;
+	double zaehler = 1;
+	double nenner = 1;
+
+	/*
+	for (int j = 0; j < n; ++j) {
+		if (j == i) { continue; }
+		zaehler *= (x - )
+	}*/
+	return 0;
+}
+
+void Interpolation::add(double newX, double newY, double newZ) {
+	/*if (points.empty()) {
+	throw runtime_error("Number of elements of the appended vector does not match");*/
+
+	// Append the point
+	x.push_back(newX);
+	y.push_back(newY);
+	z.push_back(newZ);
 }
 
 LineStrip&& Interpolation::getLineStrip() {
 	LineStrip line = LineStrip();
-	for (auto i = begin(points); i != end(points); ++i) { // C++11: non-member begin() and end()
-		line.add(*i);
+	for (int i = 0, len = x.size(); i < len; ++i) {
+		line.add(Vec3(x[i], y[i], z[i]), true);
 	}
 	return move(line); // C++11: std::move
 }
 
 void Interpolation::printContent() {
-	/*for (auto i = begin(points); i != end(points); ++i) {
-		Vec3 point = (Vec3)*i;
-		int length = sizeof point;
-		for (int j = 0; j < length; ++j) {
-			cout <<  << endl;
-		}
-	}*/
-	vector<Vec3>::size_type i;
-	for(i = 0; i != points.size(); i++) {
-		cout << points[i].p[0] << " ";
+	for (auto i = begin(x); i != end(x); ++i) {
+		cout << *i << " ";
 	}
 	cout << endl;
-
-	for(i = 0; i != points.size(); i++) {
-		cout << points[i].p[1] << " ";
+	for(auto i = begin(y); i != end(y); ++i) {
+		cout << *i << " ";
 	}
 	cout << endl;
-
-	for(i = 0; i != points.size(); i++) {
-		cout << points[i].p[2] << " ";
+	for(auto i = begin(z); i != end(z); ++i) {
+		cout << *i << " ";
 	}
 	cout << endl;
 }

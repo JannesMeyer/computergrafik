@@ -34,16 +34,14 @@ void initGLContext(int width, int height) {
 }
 
 void init() {
-	Interpolation kurve = Interpolation();
-	kurve.add(0.0, 2.0, 0.0);
-	kurve.add(1.0, 1.0, 0.0);
-	kurve.add(2.0, 4.0, 1.0);
-	kurve.add(3.0, 3.0, 0.0);
+	auto kurve = Interpolation();
+	kurve.add(2.0, 1.0, 0);
+	kurve.add(1.0, 2.0, 0);
+	kurve.add(4.0, 3.0, 0);
+	kurve.add(3.0, 4.0, 0);
+	kurve.printContent();
 
 	line = kurve.getLineStrip();
-
-	kurve.printContent();
-	//system("pause");
 }
 
 void draw() {

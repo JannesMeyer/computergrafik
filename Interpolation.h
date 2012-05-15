@@ -7,13 +7,13 @@ using namespace std;
 class Interpolation
 {
 private:
-	vector<Vec3> points;
-	int numCoordinates;
+	//vector<Vec3> points;
+	vector<double> x, y, z;
 public:
 	Interpolation();
-	Interpolation(vector<Vec3> points);
 	~Interpolation();
-	void printContent();
+	double lagrangePolynom(int i);
 	void add(double x, double y, double z);
 	LineStrip&& getLineStrip(); // C++11
+	void printContent();
 };
