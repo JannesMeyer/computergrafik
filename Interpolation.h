@@ -12,8 +12,8 @@ private:
 public:
 	Interpolation();
 	~Interpolation();
-	double lagrangePolynom(int i);
+	double interpolateLagrange(double t, vector<double> f);
 	void add(double x, double y, double z);
-	LineStrip&& getLineStrip(); // C++11
+	LineStrip&& getLineStrip(int precision); // C++11
 	void printContent();
 };

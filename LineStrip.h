@@ -10,6 +10,7 @@ class LineStrip
 {
 private:
 	vector<Vec3>* points;
+	vector<bool>* highlights;
 	GLfloat width;
 public:
 	LineStrip(GLfloat width = 2);

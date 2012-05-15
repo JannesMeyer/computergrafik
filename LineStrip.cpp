@@ -3,6 +3,7 @@
 
 LineStrip::LineStrip(GLfloat width) : width(width) {
 	points = new vector<Vec3>();
+	highlights = new vector<bool>();
 }
 
 
@@ -11,22 +12,25 @@ LineStrip::~LineStrip() {
 
 void LineStrip::add(Vec3 newPoint, bool highlight) {
 	points->push_back(newPoint);
+	highlights->push_back(highlight);
 }
 
 void LineStrip::draw() {
+	// Draw lines
 	glColor3f(0, 0, 0);
 	glLineWidth(width);
 	glBegin(GL_LINE_STRIP);
-	for (auto i = begin(*points); i != end(*points); ++i) {
-		glVertex3dv(i->p);
+	for (auto &point : *points) {
+		glVertex3dv(point.p);
 	}
 	glEnd();
 
-	glColor3f(0.9f, 0, 0);
+	// Draw markers
+	glColor3f(1, 0, 0);
 	glPointSize(width * 4);
 	glBegin(GL_POINTS);
-	for (auto i = begin(*points); i != end(*points); ++i) {
-		glVertex3dv(i->p);
+	for (auto &point : *points) {
+		glVertex3dv(point.p);
 	}
 	glEnd();
 }

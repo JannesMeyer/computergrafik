@@ -8,7 +8,7 @@
 
 int windowWidth, windowHeight;
 GLfloat alpha;
-LineStrip line;
+LineStrip linestrip;
 
 void initGLContext(int width, int height) {
 	windowWidth = width;
@@ -41,7 +41,7 @@ void init() {
 	kurve.add(3.0, 4.0, 0);
 	kurve.printContent();
 
-	line = kurve.getLineStrip();
+	linestrip = kurve.getLineStrip(10);
 }
 
 void draw() {
@@ -74,7 +74,7 @@ void draw() {
 	glRotatef(alpha, 0, 1, 0);
 
 	// Objects
-	line.draw();
+	linestrip.draw();
 }
 
 void handleInput() {
