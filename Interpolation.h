@@ -1,19 +1,17 @@
 #pragma once
 #include "LineStrip.h"
-#include <vec3.h>
 #include <vector>
 using namespace std;
 
 class Interpolation
 {
 private:
-	//vector<Vec3> points;
 	vector<double> x, y, z;
 public:
 	Interpolation();
 	~Interpolation();
-	double interpolateLagrange(double t, vector<double> f);
 	void add(double x, double y, double z);
-	LineStrip&& getLineStrip(int precision); // C++11
 	void printContent();
+	double interpolateLagrange(double t, vector<double>* f);
+	LineStrip&& getLineStrip(int precision); // C++11
 };

@@ -7,7 +7,7 @@
 
 
 int windowWidth, windowHeight;
-GLfloat alpha;
+GLfloat alpha = 0, scale = 2;
 LineStrip linestrip;
 
 void initGLContext(int width, int height) {
@@ -15,13 +15,13 @@ void initGLContext(int width, int height) {
 	windowHeight = height;
 	// Initialize GLFW
 	if (glfwInit() != GL_TRUE) {
-		throw runtime_error("Couldn't initialize GLFW");
+		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
 	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
 	if (glfwOpenWindow(width, height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
-		throw runtime_error("Couldn't open an OpenGL window");
+		throw std::runtime_error("Couldn't open an OpenGL window");
 	}
 	glfwSetWindowTitle("Kubische Interpolation");
 	glfwEnable(GLFW_STICKY_KEYS); // Buffer key presses
@@ -29,19 +29,32 @@ void initGLContext(int width, int height) {
 	// Initialize GL extension wrangler
 	if (glewInit() != GLEW_OK) {
 		glfwTerminate();
-		throw runtime_error("Couldn't initialize the GL extension wrangler");
+		throw std::runtime_error("Couldn't initialize the GL extension wrangler");
 	}
 }
 
 void init() {
-	auto kurve = Interpolation();
-	kurve.add(2.0, 1.0, 0);
-	kurve.add(1.0, 2.0, 0);
-	kurve.add(4.0, 3.0, 0);
-	kurve.add(3.0, 4.0, 0);
-	kurve.printContent();
+	auto kurve = Interpolation(); // C++11: auto
+	kurve.add(2, 2, 2);
+	kurve.add(1, 2, 0);
+	kurve.add(4, 3, 1);
+	kurve.add(3, 4, 0);
 
 	linestrip = kurve.getLineStrip(10);
+}
+
+// Draws coordinate axes
+void drawCoordinateAxes() {
+	glColor3f(0.5, 0.5, 0.5);
+	glLineWidth(1);
+	glBegin(GL_LINES);
+	glVertex3f(0, 0, 0);
+	glVertex3f(1, 0, 0);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 1, 0);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, 1);
+	glEnd();
 }
 
 void draw() {
@@ -63,6 +76,7 @@ void draw() {
 	glLoadIdentity();
 	glOrtho(-20, 20, -15, 15, -10, 60);
 	//gluPerspective(60, aspectRatio, 0.1, 255.0);
+
 	// Modelview matrix
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -70,10 +84,14 @@ void draw() {
 	// Camera
 	glTranslatef(0, 0, -10); // Move 10 units backwards in z, since camera is at origin
 	// Rotation
-	glScalef(2, 2, 2);
+	glRotatef(10, 1, 0, 0);
 	glRotatef(alpha, 0, 1, 0);
 
+	glTranslatef(0, -2, 0);
+	glScalef(scale, scale, scale);
+
 	// Objects
+	drawCoordinateAxes();
 	linestrip.draw();
 }
 
@@ -85,9 +103,15 @@ void handleInput() {
 	}
 	// Rotate
 	if (glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS) {
-		alpha += 2;
+		alpha += 1;
 	} else if (glfwGetKey(GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		alpha -= 2;
+		alpha -= 1;
+	}
+	// Zoom
+	if (glfwGetKey(GLFW_KEY_UP) == GLFW_PRESS) {
+		scale += 0.01f;
+	} else if (glfwGetKey(GLFW_KEY_DOWN) == GLFW_PRESS) {
+		scale -= 0.01f;
 	}
 }
 

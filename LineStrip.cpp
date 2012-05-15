@@ -1,18 +1,22 @@
 #include "LineStrip.h"
-#include <gl/glew.h>
+#include <iostream>
 
 LineStrip::LineStrip(GLfloat width) : width(width) {
-	points = new vector<Vec3>();
-	highlights = new vector<bool>();
+	points = new std::vector<std::pair<Vec3, bool>>();
 }
-
 
 LineStrip::~LineStrip() {
 }
 
 void LineStrip::add(Vec3 newPoint, bool highlight) {
-	points->push_back(newPoint);
-	highlights->push_back(highlight);
+	// Debug messages
+	if (highlight) {
+		std::cout << "Highlight: ";
+	}
+	newPoint.Print();
+
+	// Add the values to the points vector as a pair
+	points->push_back(std::make_pair(newPoint, highlight));
 }
 
 void LineStrip::draw() {
@@ -21,7 +25,7 @@ void LineStrip::draw() {
 	glLineWidth(width);
 	glBegin(GL_LINE_STRIP);
 	for (auto &point : *points) {
-		glVertex3dv(point.p);
+		glVertex3dv(point.first.p);
 	}
 	glEnd();
 
@@ -30,7 +34,10 @@ void LineStrip::draw() {
 	glPointSize(width * 4);
 	glBegin(GL_POINTS);
 	for (auto &point : *points) {
-		glVertex3dv(point.p);
+		// If highlight is true for this point
+		if (point.second) {
+			glVertex3dv(point.first.p);
+		}
 	}
 	glEnd();
 }
