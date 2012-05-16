@@ -62,5 +62,5 @@ LineStrip&& Interpolation::getLineStrip(int precision) {
 	// Last point (t = 1.0)
 	linestrip.add(Vec3(x.back(), y.back(), z.back()), true);
 
-	return move(linestrip); // C++11: std::move
+	return std::move(linestrip); // C++11: std::move
 }

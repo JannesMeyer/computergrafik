@@ -8,7 +8,7 @@
 
 int windowWidth, windowHeight;
 GLfloat alpha = 0, scale = 2;
-LineStrip linestrip;
+LineStrip linestrip, linestrip2;
 
 void initGLContext(int width, int height) {
 	windowWidth = width;
@@ -39,8 +39,16 @@ void init() {
 	kurve.add(1, 2, 0);
 	kurve.add(4, 3, 1);
 	kurve.add(3, 4, 0);
-
+	
 	linestrip = kurve.getLineStrip(10);
+
+	auto kurve2 = Interpolation(); // C++11: auto
+	kurve2.add(1, 1, 1);
+	kurve2.add(1, -2, 0);
+	kurve2.add(-4, 3, 1);
+	kurve2.add(2, 4, 0);
+
+	linestrip2 = kurve2.getLineStrip(15);
 }
 
 // Draws coordinate axes
@@ -93,6 +101,7 @@ void draw() {
 	// Objects
 	drawCoordinateAxes();
 	linestrip.draw();
+	linestrip2.draw();
 }
 
 void handleInput() {
