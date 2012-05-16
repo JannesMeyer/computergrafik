@@ -1,15 +1,18 @@
 #pragma once
 #include <vec3.h>
+
 #include <gl/glew.h>
 #include <vector>
-using namespace std;
 
 class LineStrip
 {
 private:
-	vector<pair<Vec3, bool>> *points;
+	std::vector<std::pair<Vec3, bool>> points;
 	GLfloat width;
+	LineStrip(const LineStrip&); // Hä?
+	const LineStrip& operator=(const LineStrip&); // Hä?
 public:
+	LineStrip(LineStrip&&); // Hä?
 	LineStrip(GLfloat width = 2);
 	~LineStrip();
 	void add(Vec3 newPoint, bool highlight = false);

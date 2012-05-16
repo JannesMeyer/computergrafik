@@ -1,14 +1,17 @@
 #include "Interpolation.h"
 #include "LineStrip.h"
-#include <iostream>
+#include "Mesh.h"
 #include <vec3.h>
+
 #include <GL/glew.h>
 #include <GL/glfw.h>
-
+#include <iostream>
+#include <memory>
 
 int windowWidth, windowHeight;
 GLfloat alpha = 0, scale = 2;
-LineStrip linestrip, linestrip2;
+std::unique_ptr<LineStrip> linestrip, linestrip2;
+//std::unique_ptr<LineStrip> mesh;
 
 void initGLContext(int width, int height) {
 	windowWidth = width;
@@ -18,7 +21,7 @@ void initGLContext(int width, int height) {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
 	if (glfwOpenWindow(width, height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
@@ -40,7 +43,7 @@ void init() {
 	kurve.add(4, 3, 1);
 	kurve.add(3, 4, 0);
 	
-	linestrip = kurve.getLineStrip(10);
+	linestrip = kurve.createLineStrip(10);
 
 	auto kurve2 = Interpolation(); // C++11: auto
 	kurve2.add(1, 1, 1);
@@ -48,7 +51,17 @@ void init() {
 	kurve2.add(-4, 3, 1);
 	kurve2.add(2, 4, 0);
 
-	linestrip2 = kurve2.getLineStrip(15);
+	linestrip2 = kurve2.createLineStrip(20);
+	//mesh = Mesh();
+	//mesh.add(0, 0, 2);
+	//mesh.add(0, 1, 2);
+	//mesh.add(0, 2, 2);
+	//mesh.add(1, 0, 2);
+	//mesh.add(1, 1, 2);
+	//mesh.add(1, 2, 2);
+	//mesh.add(2, 0, 2);
+	//mesh.add(2, 1, 2);
+	//mesh.add(2, 2, 2);
 }
 
 // Draws coordinate axes
@@ -100,8 +113,9 @@ void draw() {
 
 	// Objects
 	drawCoordinateAxes();
-	linestrip.draw();
-	linestrip2.draw();
+	linestrip->draw();
+	linestrip2->draw();
+	//mesh.draw();
 }
 
 void handleInput() {
