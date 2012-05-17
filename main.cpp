@@ -6,36 +6,18 @@
 
 #include <GL/glew.h>
 #include <GL/glfw.h>
-#include <iostream>
 #include <memory>
+#ifdef _DEBUG
+#include <cmath>
+#include <iostream>
+#include <iomanip>
+#endif
 
-int windowWidth, windowHeight;
-GLfloat alpha = 0, scale = 2;
+int windowWidth;
+int windowHeight;
+GLfloat alpha = 0;
+GLfloat scale = 2;
 std::vector<std::shared_ptr<RenderObject>> renderObjects;
-//std::unique_ptr<LineStrip> linestrip, linestrip2;
-
-void initGLContext(int width, int height) {
-	windowWidth = width;
-	windowHeight = height;
-	// Initialize GLFW
-	if (glfwInit() != GL_TRUE) {
-		throw std::runtime_error("Couldn't initialize GLFW");
-	}
-	// Open a window with 8x AA
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
-	if (glfwOpenWindow(width, height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
-		glfwTerminate();
-		throw std::runtime_error("Couldn't open an OpenGL window");
-	}
-	glfwSetWindowTitle("Kubische Interpolation");
-	glfwEnable(GLFW_STICKY_KEYS); // Buffer key presses
-
-	// Initialize GL extension wrangler
-	if (glewInit() != GLEW_OK) {
-		glfwTerminate();
-		throw std::runtime_error("Couldn't initialize the GL extension wrangler");
-	}
-}
 
 // Toggle here
 void init() {
@@ -84,6 +66,29 @@ void drawCoordinateAxes() {
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, 0, 1);
 	glEnd();
+}
+
+void initGLContext(int width, int height) {
+	windowWidth = width;
+	windowHeight = height;
+	// Initialize GLFW
+	if (glfwInit() != GL_TRUE) {
+		throw std::runtime_error("Couldn't initialize GLFW");
+	}
+	// Open a window with 8x AA
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
+	if (glfwOpenWindow(width, height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
+		glfwTerminate();
+		throw std::runtime_error("Couldn't open an OpenGL window");
+	}
+	glfwSetWindowTitle("Kubische Interpolation");
+	glfwEnable(GLFW_STICKY_KEYS); // Buffer key presses
+
+	// Initialize GL extension wrangler
+	if (glewInit() != GLEW_OK) {
+		glfwTerminate();
+		throw std::runtime_error("Couldn't initialize the GL extension wrangler");
+	}
 }
 
 void draw() {
@@ -150,12 +155,26 @@ void handleInput() {
 	}
 }
 
+// Rounding function
+inline int round(float x) {
+	return (int)(x + 0.5);
+}
+
 void main() {
 	// Create an OpenGL context
 	initGLContext(800, 600);
 
 	// Initialize the drawing code
 	init();
+
+	// Initialize time
+	glfwSwapInterval(0); // Disable vsync
+	double oldTime = glfwGetTime();
+	double currentTime;
+	double timeDelta;
+	double fps;
+	int frameCounter = 0;
+
 	// Main loop
 	do {
 		// Draw the scene
@@ -163,5 +182,16 @@ void main() {
 		glfwSwapBuffers();
 		// Handle input
 		handleInput();
+		// Calculate fps
+		currentTime = glfwGetTime();
+		timeDelta = currentTime - oldTime;
+		++frameCounter;
+		if (timeDelta > 1.0) {
+			fps = frameCounter / timeDelta;
+			std::cout << round(fps) << " fps" << std::endl;
+			// Reset everything
+			oldTime = currentTime;
+			frameCounter = 0;
+		}
 	} while(glfwGetWindowParam(GLFW_OPENED));
 }

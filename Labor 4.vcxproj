@@ -76,12 +76,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BicubicInterpolation.cpp" />
     <ClCompile Include="Interpolation.cpp" />
     <ClCompile Include="objects\LineStrip.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objects\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BicubicInterpolation.h" />
     <ClInclude Include="Interpolation.h" />
     <ClInclude Include="objects\LineStrip.h" />
     <ClInclude Include="objects\Mesh.h" />
