@@ -12,6 +12,10 @@ Thumbs.db
 *.log
 *.unsuccessfulbuild
 
+# Performance analysis files
+*.psess
+*.vsp
+
 # IntelliSense database
 *.sdf
 *.opensdf

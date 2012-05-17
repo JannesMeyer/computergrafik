@@ -8,13 +8,11 @@
 #include <GL/glfw.h>
 #include <memory>
 #ifdef _DEBUG
-#include <cmath>
 #include <iostream>
-#include <iomanip>
 #endif
 
-int windowWidth;
-int windowHeight;
+int windowWidth = 800;
+int windowHeight = 600;
 GLfloat alpha = 0;
 GLfloat scale = 2;
 std::vector<std::shared_ptr<RenderObject>> renderObjects;
@@ -68,16 +66,14 @@ void drawCoordinateAxes() {
 	glEnd();
 }
 
-void initGLContext(int width, int height) {
-	windowWidth = width;
-	windowHeight = height;
+void initGLContext() {
 	// Initialize GLFW
 	if (glfwInit() != GL_TRUE) {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
 	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
-	if (glfwOpenWindow(width, height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
+	if (glfwOpenWindow(windowWidth, windowHeight, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
 	}
@@ -92,8 +88,6 @@ void initGLContext(int width, int height) {
 }
 
 void draw() {
-	// Viewport
-	glViewport(0, 0, windowWidth, windowHeight);
 	// Clear buffers
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	//glClearDepth(1.0f);
@@ -125,9 +119,6 @@ void draw() {
 	glScalef(scale, scale, scale);
 
 	// Objects
-	glEnable(GL_LINE_SMOOTH);
-	glShadeModel(GL_SMOOTH); // Enable Smooth Shading
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); // Set Line Antialiasing
 	drawCoordinateAxes();
 
 	for (auto& object : renderObjects) {
@@ -161,8 +152,10 @@ inline int round(float x) {
 }
 
 void main() {
+	// Viewport
+	glViewport(0, 0, windowWidth, windowHeight);
 	// Create an OpenGL context
-	initGLContext(800, 600);
+	initGLContext();
 
 	// Initialize the drawing code
 	init();
@@ -183,9 +176,9 @@ void main() {
 		// Handle input
 		handleInput();
 		// Calculate fps
+		++frameCounter;
 		currentTime = glfwGetTime();
 		timeDelta = currentTime - oldTime;
-		++frameCounter;
 		if (timeDelta > 1.0) {
 			fps = frameCounter / timeDelta;
 			std::cout << round(fps) << " fps" << std::endl;
