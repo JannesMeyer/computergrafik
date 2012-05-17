@@ -75,14 +75,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Interpolation.cpp" />
-    <ClCompile Include="LineStrip.cpp" />
+    <ClCompile Include="objects\LineStrip.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="objects\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interpolation.h" />
-    <ClInclude Include="LineStrip.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="objects\LineStrip.h" />
+    <ClInclude Include="objects\Mesh.h" />
+    <ClInclude Include="LTObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

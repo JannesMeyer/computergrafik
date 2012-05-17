@@ -1,6 +1,7 @@
 #include "Interpolation.h"
-#include "LineStrip.h"
-#include "Mesh.h"
+#include "LTObject.h"
+#include "objects/LineStrip.h"
+#include "objects/Mesh.h"
 #include <vec3.h>
 
 #include <GL/glew.h>
@@ -10,8 +11,8 @@
 
 int windowWidth, windowHeight;
 GLfloat alpha = 0, scale = 2;
-std::unique_ptr<LineStrip> linestrip, linestrip2;
-//std::unique_ptr<LineStrip> mesh;
+std::vector<std::shared_ptr<LTObject>> renderObjects;
+//std::unique_ptr<LineStrip> linestrip, linestrip2;
 
 void initGLContext(int width, int height) {
 	windowWidth = width;
@@ -21,7 +22,7 @@ void initGLContext(int width, int height) {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
 	if (glfwOpenWindow(width, height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
@@ -36,6 +37,7 @@ void initGLContext(int width, int height) {
 	}
 }
 
+// Toggle here
 void init() {
 	auto kurve = Interpolation(); // C++11: auto
 	kurve.add(2, 2, 2);
@@ -43,7 +45,7 @@ void init() {
 	kurve.add(4, 3, 1);
 	kurve.add(3, 4, 0);
 	
-	linestrip = kurve.createLineStrip(10);
+	renderObjects.push_back(kurve.createLineStrip(10));
 
 	auto kurve2 = Interpolation(); // C++11: auto
 	kurve2.add(1, 1, 1);
@@ -51,18 +53,24 @@ void init() {
 	kurve2.add(-4, 3, 1);
 	kurve2.add(2, 4, 0);
 
-	linestrip2 = kurve2.createLineStrip(20);
-	//mesh = Mesh();
-	//mesh.add(0, 0, 2);
-	//mesh.add(0, 1, 2);
-	//mesh.add(0, 2, 2);
-	//mesh.add(1, 0, 2);
-	//mesh.add(1, 1, 2);
-	//mesh.add(1, 2, 2);
-	//mesh.add(2, 0, 2);
-	//mesh.add(2, 1, 2);
-	//mesh.add(2, 2, 2);
+	renderObjects.push_back(kurve2.createLineStrip(15));
 }
+/*/
+void init() {
+	std::shared_ptr<Mesh> mesh(new Mesh);
+	mesh->add(0, 0, 2);
+	mesh->add(0, 1, 2);
+	mesh->add(0, 2, 2);
+	mesh->add(1, 0, 2);
+	mesh->add(1, 1, 2);
+	mesh->add(1, 2, 2);
+	mesh->add(2, 0, 2);
+	mesh->add(2, 1, 2);
+	mesh->add(2, 2, 2);
+
+	renderObjects.push_back(mesh);
+}
+/**/
 
 // Draws coordinate axes
 void drawCoordinateAxes() {
@@ -112,10 +120,14 @@ void draw() {
 	glScalef(scale, scale, scale);
 
 	// Objects
+	glEnable(GL_LINE_SMOOTH);
+	glShadeModel(GL_SMOOTH); // Enable Smooth Shading
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); // Set Line Antialiasing
 	drawCoordinateAxes();
-	linestrip->draw();
-	linestrip2->draw();
-	//mesh.draw();
+
+	for (auto& object : renderObjects) {
+		object->draw();
+	}
 }
 
 void handleInput() {

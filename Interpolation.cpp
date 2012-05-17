@@ -22,26 +22,26 @@ void Interpolation::add(double newX, double newY, double newZ) {
 }
 
 // Calculate lagrange polynomials
-double Interpolation::interpolateLagrange(double t, std::vector<double>* f) {
+double Interpolation::interpolateLagrange(double t, std::vector<double>& f) {
 	double result = 0;
 	// L0
-	result += (*f)[0] * (-9.0/2 * pow(t, 3) + 9.0 * pow(t, 2) - 11.0/2 * t + 1);
+	result += f[0] * (-9.0/2 * pow(t, 3) + 9.0 * pow(t, 2) - 11.0/2 * t + 1);
 	// L1
-	result += (*f)[1] * (27.0/2 * pow(t, 3) - 45.0/2 * pow(t, 2) + 9.0 * t);
+	result += f[1] * (27.0/2 * pow(t, 3) - 45.0/2 * pow(t, 2) + 9.0 * t);
 	// L2
-	result += (*f)[2] * (-27.0/2 * pow(t, 3) + 18.0 * pow(t, 2) - 9.0/2 * t);
+	result += f[2] * (-27.0/2 * pow(t, 3) + 18.0 * pow(t, 2) - 9.0/2 * t);
 	// L3
-	result += (*f)[3] * (9.0/2 * pow(t, 3) - 9.0/2 * pow(t, 2) + t);
+	result += f[3] * (9.0/2 * pow(t, 3) - 9.0/2 * pow(t, 2) + t);
 	return result;
 }
 
-std::unique_ptr<LineStrip> Interpolation::createLineStrip(int precision) {
+std::shared_ptr<LineStrip> Interpolation::createLineStrip(int precision) {
 	int n = x.size(), i, j;
 	double t, tLowerBound, tUpperBound;
 	double tSectionStep = 1.0 / (n - 1);
 	double tStep = tSectionStep / precision;
 	Vec3 interpolatedPoint;
-	std::unique_ptr<LineStrip> linestrip(new LineStrip); // Hä?
+	std::shared_ptr<LineStrip> linestrip(new LineStrip);
 	
 	// n-1 sections
 	for (i = 0; i < (n-1); ++i) {
@@ -53,9 +53,9 @@ std::unique_ptr<LineStrip> Interpolation::createLineStrip(int precision) {
 			// Calculate t
 			t = tLowerBound + (j * tStep);
 			// Calculate point
-			interpolatedPoint = Vec3(interpolateLagrange(t, &x),
-			                         interpolateLagrange(t, &y),
-									 interpolateLagrange(t, &z));
+			interpolatedPoint = Vec3(interpolateLagrange(t, x),
+			                         interpolateLagrange(t, y),
+									 interpolateLagrange(t, z));
 			// Diesen Punkt hervorheben, wenn es der erste eines Abschnitts ist (j == 0)
 			linestrip->add(interpolatedPoint, j == 0);
 		}

@@ -1,5 +1,5 @@
 #pragma once
-#include "LineStrip.h"
+#include "objects/LineStrip.h"
 
 #include <vector>
 #include <memory>
@@ -12,6 +12,6 @@ public:
 	Interpolation();
 	~Interpolation();
 	void add(double x, double y, double z);
-	double interpolateLagrange(double t, std::vector<double>* f);
-	std::unique_ptr<LineStrip> createLineStrip(int precision); // C++11
+	double interpolateLagrange(double t, std::vector<double>& f); // wow
+	std::shared_ptr<LineStrip> createLineStrip(int precision); // C++11: shared pointer
 };

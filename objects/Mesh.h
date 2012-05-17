@@ -1,5 +1,7 @@
 #pragma once
-class Mesh
+#include "../LTObject.h"
+
+class Mesh : public LTObject
 {
 private:
 	double points[3][3];

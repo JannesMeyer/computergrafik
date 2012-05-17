@@ -21,10 +21,10 @@
     <ClCompile Include="Interpolation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LineStrip.cpp">
+    <ClCompile Include="objects\LineStrip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="objects\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,10 +32,13 @@
     <ClInclude Include="Interpolation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LineStrip.h">
+    <ClInclude Include="objects\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="objects\LineStrip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LTObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
