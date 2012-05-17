@@ -5,7 +5,7 @@
 #include <cmath>
 
 Interpolation::Interpolation() {
-	// Create empty points vectors (not necessary)
+	// Not necessary
 	//x = vector<double>();
 	//y = vector<double>();
 	//z = vector<double>();
@@ -36,19 +36,23 @@ double Interpolation::interpolateLagrange(double t, std::vector<double>& f) {
 }
 
 std::shared_ptr<LineStrip> Interpolation::createLineStrip(int precision) {
-	int n = x.size(), i, j;
+	int i, j;
+	const int n = x.size();
+	const int numSections = n - 1;
+
 	double t, tLowerBound, tUpperBound;
-	double tSectionStep = 1.0 / (n - 1);
-	double tStep = tSectionStep / precision;
 	Vec3 interpolatedPoint;
-	std::shared_ptr<LineStrip> linestrip(new LineStrip);
-	
+	const double tSectionStep = 1.0 / numSections;
+	const double tStep = tSectionStep / precision;
+
+	std::shared_ptr<LineStrip> linestrip(new LineStrip); // const?
+
 	// n-1 sections
-	for (i = 0; i < (n-1); ++i) {
+	for (i = 0; i < numSections; ++i) {
 		tLowerBound = tSectionStep * i;
 		tUpperBound = tSectionStep * (i + 1);
 
-		// Section
+		// Precision elements in each section
 		for (j = 0; j < precision; ++j) {
 			// Calculate t
 			t = tLowerBound + (j * tStep);
@@ -60,7 +64,7 @@ std::shared_ptr<LineStrip> Interpolation::createLineStrip(int precision) {
 			linestrip->add(interpolatedPoint, j == 0);
 		}
 	}
-	// Last point (t = 1.0)
+	// Don't forget the last point t = 1.0
 	linestrip->add(Vec3(x.back(), y.back(), z.back()), true);
 
 	return linestrip;

@@ -1,5 +1,5 @@
 #include "Interpolation.h"
-#include "LTObject.h"
+#include "RenderObject.h"
 #include "objects/LineStrip.h"
 #include "objects/Mesh.h"
 #include <vec3.h>
@@ -11,7 +11,7 @@
 
 int windowWidth, windowHeight;
 GLfloat alpha = 0, scale = 2;
-std::vector<std::shared_ptr<LTObject>> renderObjects;
+std::vector<std::shared_ptr<RenderObject>> renderObjects;
 //std::unique_ptr<LineStrip> linestrip, linestrip2;
 
 void initGLContext(int width, int height) {

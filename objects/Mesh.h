@@ -1,7 +1,7 @@
 #pragma once
-#include "../LTObject.h"
+#include "../RenderObject.h"
 
-class Mesh : public LTObject
+class Mesh : public RenderObject
 {
 private:
 	double points[3][3];

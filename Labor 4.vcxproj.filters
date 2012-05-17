@@ -38,7 +38,7 @@
     <ClInclude Include="objects\LineStrip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LTObject.h">
+    <ClInclude Include="RenderObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

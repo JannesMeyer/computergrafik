@@ -10,11 +10,10 @@ LineStrip::~LineStrip() {
 }
 
 void LineStrip::add(Vec3 newPoint, bool highlight) {
-	// Debug messages
-	if (highlight) {
-		std::cout << "Highlight: ";
-	}
+#ifdef _DEBUG
+	if (highlight) { std::cout << "Sample point: "; }
 	newPoint.Print();
+#endif
 
 	// Add the values to the points vector as a pair
 	points.emplace_back(newPoint, highlight); // C++11

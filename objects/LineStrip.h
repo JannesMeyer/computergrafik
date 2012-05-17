@@ -1,11 +1,11 @@
 #pragma once
-#include "../LTObject.h"
+#include "../RenderObject.h"
 #include <vec3.h>
 
 #include <GL/glew.h>
 #include <vector>
 
-class LineStrip : public LTObject
+class LineStrip : public RenderObject
 {
 private:
 	std::vector<std::pair<Vec3, bool>> points;

@@ -12,6 +12,6 @@ public:
 	Interpolation();
 	~Interpolation();
 	void add(double x, double y, double z);
-	double interpolateLagrange(double t, std::vector<double>& f); // wow
+	double interpolateLagrange(double t, std::vector<double>& f); // call by reference
 	std::shared_ptr<LineStrip> createLineStrip(int precision); // C++11: shared pointer
 };
