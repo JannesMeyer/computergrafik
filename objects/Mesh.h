@@ -1,8 +1,7 @@
 #pragma once
 #include "../RenderObject.h"
+#include <GL/glew.h>
 #include <vector>
-
-void setMaterialColor(float r, float g, float b);
 
 struct Coord {
 	double x;
@@ -14,10 +13,13 @@ class Mesh : public RenderObject
 {
 private:
 	std::vector<std::vector<Coord>> points;
+	GLfloat width;
+	bool readonly;
 	int currentLine;
+	GLuint displayList;
+	void initDisplayList();
 public:
-	Mesh(void);
-	~Mesh(void);
+	Mesh(GLfloat width = 2);
 	void newLine();
 	void add(double x, double y, double z);
 	void draw();

@@ -13,9 +13,8 @@ private:
 	int currentPoints;
 public:
 	BicubicInterpolation(int width, int height);
-	~BicubicInterpolation();
 	void add(double z);
 	double interpolateLagrange(double s, std::vector<double>& f);
 	double interpolateLagrange(double s, double t);
-	std::shared_ptr<Mesh> getMesh(int precision);
+	std::shared_ptr<Mesh> createMesh(int precision);
 };

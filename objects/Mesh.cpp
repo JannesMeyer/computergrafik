@@ -1,28 +1,10 @@
 #include "Mesh.h"
 #include <vec3.h>
-#include <vector>
 #include <GL/glew.h>
-#ifdef _DEBUG
-#include <iostream>
-#endif
 
-void setMaterialColor(float r, float g, float b) {
-	float dif[4] = {r, g, b, 1};
-	float amb[4] = {0.5f * r, 0.5f * g, 0.5f * b, 1};
-	//float spe[4] = {0.6, 0.6, 0.6, 1};
-
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, dif);
-	//glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spe);
-	//glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
-}
-
-Mesh::Mesh(void) {
-	currentLine = -1;
-}
-
-
-Mesh::~Mesh(void) {
+Mesh::Mesh(GLfloat width) : width(width), readonly(false), currentLine(-1)
+{
+	displayList = glGenLists(1);
 }
 
 void Mesh::newLine() {
@@ -31,23 +13,43 @@ void Mesh::newLine() {
 }
 
 void Mesh::add(double x, double y, double z) {
-	Coord a = {x, y, z};
-	points[currentLine].push_back(a);
+	if (readonly) {
+		throw std::runtime_error("This object is read-only.");
+	}
+
+	Coord newPoint = {x, y, z};
+	points[currentLine].push_back(newPoint);
 }
 
+void Mesh::initDisplayList() {
+	readonly = true;
+
+	glNewList(displayList, GL_COMPILE);
+		glColor3f(0, 0, 0);
+		glPointSize(width);
+		glBegin(GL_POINTS);
+		for (auto& line : points) {
+			for (auto& point : line) {
+				glVertex3d(point.x, point.z, point.y);
+			}
+		}
+		glEnd();
+	glEndList();
+}
+
+/*
 void Mesh::draw() {
-	int line, length, i, length2;
+	int line, len, i, len2;
 	Coord* p1;
 	Coord* p2;
 
-	glColor3d(0, 0, 0);
 	glPointSize(4);
 	glLineWidth(2);
 
 	// Skip the last element
-	for (line = 0, length = points.size() - 1; line < length; ++line) {
+	for (line = 0, len= points.size() - 1; line < len; ++line) {
 		glBegin(GL_QUAD_STRIP);
-		for (i = 0, length2 = points[line].size(); i < length2; ++i) {
+		for (i = 0, len2 = points[line].size(); i < len2; ++i) {
 			p1 = &points[line][i];
 			p2 = &points[line + 1][i];
 			glVertex3d(p1->x, p1->z, p1->y);
@@ -60,4 +62,12 @@ void Mesh::draw() {
 	//for (auto line = begin(points); line != end(points) - 1; ++line)
 	//	auto nextLine = line;
 	//	++nextLine;
+}
+*/
+
+void Mesh::draw() {
+	if (!readonly) {
+		initDisplayList();
+	}
+	glCallList(displayList);
 }

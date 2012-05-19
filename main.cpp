@@ -1,3 +1,4 @@
+#include "Scene.h"
 #include "Interpolation.h"
 #include "BicubicInterpolation.h"
 #include "RenderObject.h"
@@ -6,23 +7,68 @@
 #include "objects/Mesh.h"
 #include <vec3.h>
 
-#include <GL/glew.h>
 #include <GL/glfw.h>
 #include <memory>
 #include <iostream>
 
-int windowWidth = 800;
-int windowHeight = 600;
-GLfloat alpha = 0;
-GLfloat scale = 1;
-std::vector<std::shared_ptr<RenderObject>> renderObjects;
-bool wireframeEnabled = false;
-bool vsyncEnabled = true;
+std::shared_ptr<Scene> scene;
 
-/*/ Toggle here
-void init() {
+struct {
+	int width;
+	int height;
+	bool wireframeEnabled;
+	bool vsyncEnabled;
+} settings;
+
+// Rounding function
+template<class T>
+int round(T x) {
+	return static_cast<int>(x + 0.5);
+}
+
+// Calculates frames per second
+class FpsCounter
+{
+private:
+	double oldTime;
+	double currentTime;
+	double timeDelta;
+	int frameCounter;
+
+public:
+	FpsCounter() {
+		oldTime = glfwGetTime();
+		frameCounter = 0;
+	}
+
+	// Should be called for every frame
+	void tick() {
+		++frameCounter;
+		if (frameCounter < 20) {
+			return;
+		}
+
+		currentTime = glfwGetTime();
+		timeDelta = currentTime - oldTime;
+		if (timeDelta > 1.0) {
+			printFps();
+			// Reset state
+			oldTime = currentTime;
+			frameCounter = 0;
+		}
+	}
+
+	// Calculates and prints the FPS value
+	const void printFps() {
+		double fps = frameCounter / timeDelta;
+		std::cout << round(fps) << " fps" << std::endl;
+	}
+};
+
+// Labor 4
+void initLab4() {
 	// Draw coordinate axes
-	renderObjects.emplace_back(new CoordinateAxes);
+	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 
 	// Interpolate a line of 4 points
 	Interpolation kurve;
@@ -30,97 +76,68 @@ void init() {
 	kurve.add(1, 2, 0);
 	kurve.add(4, 3, 1);
 	kurve.add(3, 4, 0);
-	
-	renderObjects.push_back(kurve.createLineStrip(10));
+	// Interpolate and add the results to the scene
+	scene->add(kurve.createLineStrip(10));
 
+	// Interpolate a line of 4 points
 	Interpolation kurve2;
 	kurve2.add(1, 1, 1);
 	kurve2.add(1, -2, 0);
 	kurve2.add(-4, 3, 1);
 	kurve2.add(2, 4, 0);
-
-	renderObjects.push_back(kurve2.createLineStrip(15));
+	// Interpolate and add the results to the scene
+	scene->add(kurve2.createLineStrip(15));
 }
-/*/
-void init() {
-	// Draw coordinate axes
-	renderObjects.emplace_back(new CoordinateAxes);
+
+// Labor 5
+void initLab5() {
+	// Add coordinate axes to the scene
+	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 
 	// Interpolate a 4x4 matrix of points
-	BicubicInterpolation gitter = BicubicInterpolation(4, 4);
+	BicubicInterpolation matrix = BicubicInterpolation(4, 4);
 	// First row
-	gitter.add(2.0);
-	gitter.add(1.0);
-	gitter.add(1.0);
-	gitter.add(1.0);
+	matrix.add(2.0);
+	matrix.add(1.0);
+	matrix.add(1.0);
+	matrix.add(1.0);
 	// Second row
-	gitter.add(1.0);
-	gitter.add(0.5);
-	gitter.add(3.0);
-	gitter.add(1.0);
+	matrix.add(1.0);
+	matrix.add(0.5);
+	matrix.add(3.0);
+	matrix.add(1.0);
 	// Third row
-	gitter.add(2.0);
-	gitter.add(1.2);
-	gitter.add(1.3);
-	gitter.add(2.0);
+	matrix.add(2.0);
+	matrix.add(1.2);
+	matrix.add(1.3);
+	matrix.add(2.0);
 	// Fourth row
-	gitter.add(1.2);
-	gitter.add(1.0);
-	gitter.add(1.8);
-	gitter.add(2.0);
-
-	renderObjects.push_back(gitter.getMesh(10));
-}
-/**/
-
-void GLFWCALL keyHandler(int key, int action) {
-	// Toggle wireframe mode
-	if (key == 'W' && action == GLFW_PRESS) {
-		wireframeEnabled = !wireframeEnabled;
-		glPolygonMode(GL_FRONT_AND_BACK, wireframeEnabled ? GL_POINT : GL_FILL);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-	}
-	// Toggle vsync
-	if (key == 'V' && action == GLFW_PRESS) {
-		vsyncEnabled = !vsyncEnabled;
-		glfwSwapInterval(static_cast<int>(vsyncEnabled));
-	}
-	// Close window
-	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
-		glfwCloseWindow();
-		return;
-	}
+	matrix.add(1.2);
+	matrix.add(1.0);
+	matrix.add(1.8);
+	matrix.add(2.0);
+	// Interpolate and add the results to the scene
+	scene->add(matrix.createMesh(10));
 }
 
-void handleInput() {
-	// Rotate
-	if (glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS) {
-		alpha += 1;
-	} else if (glfwGetKey(GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		alpha -= 1;
-	}
-	// Zoom
-	if (glfwGetKey(GLFW_KEY_UP) == GLFW_PRESS) {
-		scale += 0.01f;
-	} else if (glfwGetKey(GLFW_KEY_DOWN) == GLFW_PRESS) {
-		scale -= 0.01f;
-	}
-}
+void initGLWindow(int width, int height) {
+	settings.width = width;
+	settings.height = height;
+	settings.wireframeEnabled = false;
+	settings.vsyncEnabled = true;
 
-void initGLContext() {
 	// Initialize GLFW
 	if (glfwInit() != GL_TRUE) {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
 	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-	if (glfwOpenWindow(windowWidth, windowHeight, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
+	if (glfwOpenWindow(settings.width, settings.height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
 	}
-	glfwSetWindowTitle("Kubische Interpolation");
-	glfwEnable(GLFW_STICKY_KEYS); // Buffer key presses
-	glfwSetKeyCallback(keyHandler);
+	glfwSetWindowTitle("Interpolation demo");
+	glfwEnable(GLFW_STICKY_KEYS);
 
 	// Initialize GL extension wrangler
 	if (glewInit() != GLEW_OK) {
@@ -129,141 +146,66 @@ void initGLContext() {
 	}
 
 	// Disable vsync if wanted
-	if (!vsyncEnabled) {
+	if (!settings.vsyncEnabled) {
 		glfwSwapInterval(0);
 	}
+
+	// Set viewport
+	glViewport(0, 0, settings.width, settings.height);
+
 }
 
-// set viewport transformations and draw objects
-void lighting()
-{
-	GLfloat lp1[4] = { 10, 5, 10,  1};
-	GLfloat lp2[4] = { -5, 5, -10,  1};
-	GLfloat white[4] = { 1.0f,  1.0f,  1.0f,  1};
-	GLfloat ambient[4] = { 0.3f,  0.3f,  0.3f,  1};
-
-	//glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, 1);
-	//glEnable(GL_COLOR_MATERIAL);
-	//glShadeModel(GL_SMOOTH);
-
-	glLightfv(GL_LIGHT1, GL_POSITION, lp1);
-	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE,  white);
-	//glLightfv(GL_LIGHT1, GL_SPECULAR, white);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT1);
-
-	//glLightfv(GL_LIGHT2, GL_POSITION, lp2);
-	//glLightfv(GL_LIGHT2, GL_AMBIENT, white);
-	//glLightfv(GL_LIGHT2, GL_DIFFUSE,  white);
-	//glLightfv(GL_LIGHT2, GL_SPECULAR, white);
-	//glEnable(GL_LIGHT2);
-
-	   // const float amb1 = 2.0;
-    //const float LightAmbient[][4]  = {  { amb1, amb1, amb1, 1.0f },
-    //                                    { amb1, amb1, amb1, 1.0f }
-    //                                };
-    //const float LightDiffuse[] [4] = {  { 1.0f, 1.0f, 1.0f, 1.0f },
-    //                                    { 1.0f, 1.0f, 1.0f, 1.0f }
-    //                                };
-    //const float LightPosition[][4] = {  { 1.0f,  4.0f, 2.0f, 0.0f },
-    //                                    { 0.0f, 10.0f, 0.0f, 1.0f }
-    //                                };
-
-    //glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient[0]);
-    //glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse[0]);
-    //glLightfv(GL_LIGHT0, GL_POSITION, LightPosition[0]);
-
-    ////glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    ////glEnable(GL_COLOR);
-    ////glEnable(GL_COLOR_MATERIAL);
-	
-    //glEnable(GL_LIGHTING);
-    //glEnable(GL_LIGHT0);
-}
-
-void draw() {
-	// Clear buffers
-	glClearColor(0, 0, 0, 1);
-	glClearDepth(1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	// Lighting
-	lighting();
-	
-	// Projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-10, 10, -7.5, 7.5, -10, 60);
-	//gluPerspective(60, aspectRatio, 0.1, 255.0);
-
-	// Modelview matrix
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	//gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);
-	// Camera
-	glTranslatef(0, 0, -10); // Move 10 units backwards in z, since camera is at origin
-	// Rotation
-	glRotatef(10, 1, 0, 0);
-	glRotatef(alpha, 0, 1, 0);
-
-	glTranslatef(0, -2, 0);
-	glScalef(scale, scale, scale);
-
-	setMaterialColor(1, 1, 1);
-	//gluSphere(gluNewQuadric(), 2, 50, 50);
-
-	// Objects
-	for (auto& object : renderObjects) {
-		object->draw();
+void handleInput() {
+	// Rotate
+	if (glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS) {
+		scene->rotation += 1;
+	} else if (glfwGetKey(GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		scene->rotation -= 1;
+	}
+	// Zoom
+	if (glfwGetKey(GLFW_KEY_UP) == GLFW_PRESS) {
+		scene->scale += 0.01f;
+	} else if (glfwGetKey(GLFW_KEY_DOWN) == GLFW_PRESS) {
+		scene->scale -= 0.01f;
 	}
 }
 
-// Rounding function
-template<class T>
-int round(T x) {
-	return static_cast<int>(x + 0.5);
+void GLFWCALL handleKeyEvent(int key, int action) {
+	// Toggle wireframe mode
+	if (key == 'W' && action == GLFW_PRESS) {
+		//wireframeEnabled = !wireframeEnabled;
+		//glPolygonMode(GL_FRONT_AND_BACK, wireframeEnabled ? GL_POINT : GL_FILL);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	}
+	// Toggle vsync
+	if (key == 'V' && action == GLFW_PRESS) {
+		//vsyncEnabled = !vsyncEnabled;
+		//glfwSwapInterval(static_cast<int>(vsyncEnabled));
+	}
+	// Close window
+	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
+		glfwCloseWindow();
+		return;
+	}
 }
 
 int main() {
-	// Viewport
-	glViewport(0, 0, windowWidth, windowHeight);
-	// Create an OpenGL context
-	initGLContext();
-
+	initGLWindow(800, 600);
+	scene = std::shared_ptr<Scene>(new Scene);
 	// Initialize the drawing code
-	init();
-
-	// Initialize time
-	double oldTime = glfwGetTime();
-	double currentTime;
-	double timeDelta;
-	double fps;
-	int frameCounter = 0;
+	initLab5();
+	
+	glfwSetKeyCallback(handleKeyEvent);
 
 	// Main loop
+	FpsCounter fps;
 	do {
-		// Draw the scene
-		draw();
+		scene->draw();
 		glfwSwapBuffers();
-		// Handle input
+
 		handleInput();
-		// Calculate fps
-		++frameCounter;
-		currentTime = glfwGetTime();
-		timeDelta = currentTime - oldTime;
-		if (timeDelta > 1.0) {
-			fps = frameCounter / timeDelta;
-			std::cout << round(fps) << " fps" << std::endl;
-			// Reset everything
-			oldTime = currentTime;
-			frameCounter = 0;
-		}
+		
+		fps.tick();
 	} while(glfwGetWindowParam(GLFW_OPENED));
 
 	return 0;

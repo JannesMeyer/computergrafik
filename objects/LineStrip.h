@@ -1,7 +1,6 @@
 #pragma once
 #include "../RenderObject.h"
 #include <vec3.h>
-
 #include <GL/glew.h>
 #include <vector>
 
@@ -18,7 +17,6 @@ private:
 public:
 	//LineStrip(LineStrip&&); // move constructor
 	LineStrip(GLfloat width = 2);
-	~LineStrip();
 	void add(Vec3 newPoint, bool highlight = false);
 	void draw();
 };

@@ -1,22 +1,11 @@
 #include "LineStrip.h"
 
-#ifdef _DEBUG
-#include <iostream>
-#endif
-
 LineStrip::LineStrip(GLfloat width) : width(width) {
 	readonly = false;
 	displayList = glGenLists(1);
 }
 
-LineStrip::~LineStrip() {
-}
-
 void LineStrip::add(Vec3 newPoint, bool highlight) {
-#ifdef _DEBUG
-	if (highlight) { std::cout << "Sample point: "; }
-	newPoint.Print();
-#endif
 	if (readonly) {
 		throw std::runtime_error("This object is read-only.");
 	}

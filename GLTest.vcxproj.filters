@@ -39,6 +39,9 @@
     <ClCompile Include="objects\CoordinateAxes.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interpolation.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="objects\CoordinateAxes.h">
       <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

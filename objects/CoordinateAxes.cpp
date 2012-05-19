@@ -3,7 +3,7 @@
 
 // Draws coordinate axes
 void CoordinateAxes::draw() {
-	glColor3f(0.5, 0.5, 0.5);
+	glColor3f(0.5f, 0.5f, 0.5f);
 	glLineWidth(1);
 	glBegin(GL_LINES);
 		glVertex3f(0, 0, 0);

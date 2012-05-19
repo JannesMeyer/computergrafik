@@ -1,12 +1,8 @@
 #include "BicubicInterpolation.h"
-#include <iostream>
 
 BicubicInterpolation::BicubicInterpolation(int width, int height) : xMax(width), yMax(height), numPoints(width * height) {
 	currentPoints = 0;
 	points.resize(xMax, std::vector<double>(yMax));
-}
-
-BicubicInterpolation::~BicubicInterpolation() {
 }
 
 void BicubicInterpolation::add(double z) {
@@ -17,10 +13,6 @@ void BicubicInterpolation::add(double z) {
 	++currentPoints;
 	int x = (currentPoints - 1) % xMax;
 	int y = (currentPoints - 1) / xMax;
-
-#ifdef _DEBUG
-	std::cout << "Coord = (" << x << ", " << y << ", " << z << ")" << std::endl;
-#endif
 
 	//points[x][y] = z;
 	points.at(x).at(y) = z;
@@ -45,7 +37,7 @@ double BicubicInterpolation::interpolateLagrange(double s, double t) {
 	return result;
 }
 
-std::shared_ptr<Mesh> BicubicInterpolation::getMesh(int precision) {
+std::shared_ptr<Mesh> BicubicInterpolation::createMesh(int precision) {
 	std::shared_ptr<Mesh> mesh(new Mesh);
 	double s, t;
 

@@ -1,7 +1,5 @@
 #include "Interpolation.h"
 #include <vec3.h>
-
-#include <iostream>
 #include <cmath>
 
 Interpolation::Interpolation() {
@@ -9,9 +7,6 @@ Interpolation::Interpolation() {
 	//x = vector<double>();
 	//y = vector<double>();
 	//z = vector<double>();
-}
-
-Interpolation::~Interpolation(void) {
 }
 
 void Interpolation::add(double newX, double newY, double newZ) {
