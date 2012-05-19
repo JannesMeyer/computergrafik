@@ -2,11 +2,13 @@
 #include <vec3.h>
 #include <vector>
 #include <GL/glew.h>
+#ifdef _DEBUG
 #include <iostream>
+#endif
 
 void setMaterialColor(float r, float g, float b) {
 	float dif[4] = {r, g, b, 1};
-	float amb[4] = {0.5 * r, 0.5 * g, 0.5 * b, 1};
+	float amb[4] = {0.5f * r, 0.5f * g, 0.5f * b, 1};
 	//float spe[4] = {0.6, 0.6, 0.6, 1};
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
@@ -30,7 +32,6 @@ void Mesh::newLine() {
 
 void Mesh::add(double x, double y, double z) {
 	Coord a = {x, y, z};
-	std::cout << "x: " << x << " y: " << y << " z: " << z << std::endl;
 	points[currentLine].push_back(a);
 }
 
@@ -39,7 +40,7 @@ void Mesh::draw() {
 	Coord* p1;
 	Coord* p2;
 
-	//glColor3d(0, 0, 0);
+	glColor3d(0, 0, 0);
 	glPointSize(4);
 	glLineWidth(2);
 
@@ -49,8 +50,8 @@ void Mesh::draw() {
 		for (i = 0, length2 = points[line].size(); i < length2; ++i) {
 			p1 = &points[line][i];
 			p2 = &points[line + 1][i];
-			glVertex3d(p1->x, p1->y, p1->z);
-			glVertex3d(p2->x, p2->y, p2->z);
+			glVertex3d(p1->x, p1->z, p1->y);
+			glVertex3d(p2->x, p2->z, p2->y);
 		}
 		glEnd();
 	}

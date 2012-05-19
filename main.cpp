@@ -10,8 +10,6 @@
 #include <GL/glfw.h>
 #include <memory>
 #include <iostream>
-#ifdef _DEBUG
-#endif
 
 int windowWidth = 800;
 int windowHeight = 600;
@@ -23,8 +21,10 @@ bool vsyncEnabled = true;
 
 /*/ Toggle here
 void init() {
+	// Draw coordinate axes
 	renderObjects.emplace_back(new CoordinateAxes);
 
+	// Interpolate a line of 4 points
 	Interpolation kurve;
 	kurve.add(2, 2, 2);
 	kurve.add(1, 2, 0);
@@ -43,6 +43,7 @@ void init() {
 }
 /*/
 void init() {
+	// Draw coordinate axes
 	renderObjects.emplace_back(new CoordinateAxes);
 
 	// Interpolate a 4x4 matrix of points
@@ -55,7 +56,7 @@ void init() {
 	// Second row
 	gitter.add(1.0);
 	gitter.add(0.5);
-	gitter.add(1.0);
+	gitter.add(3.0);
 	gitter.add(1.0);
 	// Third row
 	gitter.add(2.0);
@@ -63,23 +64,12 @@ void init() {
 	gitter.add(1.3);
 	gitter.add(2.0);
 	// Fourth row
-	gitter.add(1.0);
+	gitter.add(1.2);
 	gitter.add(1.0);
 	gitter.add(1.8);
 	gitter.add(2.0);
 
 	renderObjects.push_back(gitter.getMesh(10));
-
-	//std::shared_ptr<Mesh> mesh(new Mesh);
-	//mesh->add(0, 0, 2);
-	//mesh->add(0, 1, 2);
-	//mesh->add(0, 2, 2);
-	//mesh->add(1, 0, 2);
-	//mesh->add(1, 1, 2);
-	//mesh->add(1, 2, 2);
-	//mesh->add(2, 0, 2);
-	//mesh->add(2, 1, 2);
-	//mesh->add(2, 2, 2);
 }
 /**/
 
@@ -87,7 +77,7 @@ void GLFWCALL keyHandler(int key, int action) {
 	// Toggle wireframe mode
 	if (key == 'W' && action == GLFW_PRESS) {
 		wireframeEnabled = !wireframeEnabled;
-		glPolygonMode(GL_FRONT_AND_BACK, wireframeEnabled ? GL_LINE : GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, wireframeEnabled ? GL_POINT : GL_FILL);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 	}
 	// Toggle vsync
@@ -240,7 +230,7 @@ int round(T x) {
 	return static_cast<int>(x + 0.5);
 }
 
-void main() {
+int main() {
 	// Viewport
 	glViewport(0, 0, windowWidth, windowHeight);
 	// Create an OpenGL context
@@ -275,4 +265,6 @@ void main() {
 			frameCounter = 0;
 		}
 	} while(glfwGetWindowParam(GLFW_OPENED));
+
+	return 0;
 }
