@@ -1,15 +1,25 @@
 #pragma once
 #include "../RenderObject.h"
+#include <vector>
+
+void setMaterialColor(float r, float g, float b);
+
+struct Coord {
+	double x;
+	double y;
+	double z;
+};
 
 class Mesh : public RenderObject
 {
 private:
-	double points[3][3];
-	int stepX, stepY;
+	std::vector<std::vector<Coord>> points;
+	int currentLine;
 public:
 	Mesh(void);
 	~Mesh(void);
-	void add(int xpos, int ypos, double z);
+	void newLine();
+	void add(double x, double y, double z);
 	void draw();
 };
 

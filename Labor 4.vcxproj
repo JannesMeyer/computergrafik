@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="BicubicInterpolation.cpp" />
     <ClCompile Include="Interpolation.cpp" />
+    <ClCompile Include="objects\CoordinateAxes.cpp" />
     <ClCompile Include="objects\LineStrip.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objects\Mesh.cpp" />
@@ -85,6 +86,7 @@
   <ItemGroup>
     <ClInclude Include="BicubicInterpolation.h" />
     <ClInclude Include="Interpolation.h" />
+    <ClInclude Include="objects\CoordinateAxes.h" />
     <ClInclude Include="objects\LineStrip.h" />
     <ClInclude Include="objects\Mesh.h" />
     <ClInclude Include="RenderObject.h" />
