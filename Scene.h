@@ -14,8 +14,8 @@ public:
 
 	Scene();
 	void add(std::shared_ptr<RenderObject> object);
-	void lighting();
-	void setMaterialColor(GLfloat r, GLfloat g, GLfloat b);
-	void draw();
+	const void lighting();
+	const void setMaterialColor(GLfloat r, GLfloat g, GLfloat b);
+	const void draw();
 };
 

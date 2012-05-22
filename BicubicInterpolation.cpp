@@ -40,12 +40,12 @@ double BicubicInterpolation::interpolateLagrange(double s, double t) {
 std::shared_ptr<Mesh> BicubicInterpolation::createMesh(int precision) {
 	std::shared_ptr<Mesh> mesh(new Mesh);
 	double s, t;
+	double stepSize = 1.0 / precision;
 
-	for (s = 0; s < 1.0; s += 0.02) {
+	for (s = 0; s < 1.0; s += stepSize) {
 		mesh->newLine();
-		for (t = 0; t < 1.0; t += 0.02) {
-			// Now we have values for s and t that correspond to positions on the grid
-			// Calculate x, y, and z
+		for (t = 0; t < 1.0; t += stepSize) {
+			// Now we have values for s and t that correspond to positions on the grid, so we can calculate x, y, and z
 			mesh->add(s * 4, t * 4, interpolateLagrange(s, t));
 		}
 	}

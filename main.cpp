@@ -12,7 +12,6 @@
 #include <iostream>
 
 std::shared_ptr<Scene> scene;
-
 struct {
 	int width;
 	int height;
@@ -20,7 +19,7 @@ struct {
 	bool vsyncEnabled;
 } settings;
 
-// Rounding function
+// A simple rounding function
 template<class T>
 int round(T x) {
 	return static_cast<int>(x + 0.5);
@@ -117,21 +116,22 @@ void initLab5() {
 	matrix.add(1.8);
 	matrix.add(2.0);
 	// Interpolate and add the results to the scene
-	scene->add(matrix.createMesh(10));
+	scene->add(matrix.createMesh(50));
 }
 
 void initGLWindow(int width, int height) {
+	// Some settings
+	settings.wireframeEnabled = true;
+	settings.vsyncEnabled = true;
 	settings.width = width;
 	settings.height = height;
-	settings.wireframeEnabled = false;
-	settings.vsyncEnabled = true;
 
 	// Initialize GLFW
 	if (glfwInit() != GL_TRUE) {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
 	if (glfwOpenWindow(settings.width, settings.height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
@@ -149,6 +149,9 @@ void initGLWindow(int width, int height) {
 	if (!settings.vsyncEnabled) {
 		glfwSwapInterval(0);
 	}
+
+	// Enable wireframe rendering if wanted
+	glPolygonMode(GL_FRONT_AND_BACK, settings.wireframeEnabled ? GL_POINT : GL_FILL);
 
 	// Set viewport
 	glViewport(0, 0, settings.width, settings.height);
@@ -173,14 +176,13 @@ void handleInput() {
 void GLFWCALL handleKeyEvent(int key, int action) {
 	// Toggle wireframe mode
 	if (key == 'W' && action == GLFW_PRESS) {
-		//wireframeEnabled = !wireframeEnabled;
-		//glPolygonMode(GL_FRONT_AND_BACK, wireframeEnabled ? GL_POINT : GL_FILL);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		settings.wireframeEnabled = !settings.wireframeEnabled;
+		glPolygonMode(GL_FRONT_AND_BACK, settings.wireframeEnabled ? GL_POINT : GL_FILL);
 	}
 	// Toggle vsync
 	if (key == 'V' && action == GLFW_PRESS) {
-		//vsyncEnabled = !vsyncEnabled;
-		//glfwSwapInterval(static_cast<int>(vsyncEnabled));
+		settings.vsyncEnabled = !settings.vsyncEnabled;
+		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
 	}
 	// Close window
 	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
