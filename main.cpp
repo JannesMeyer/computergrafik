@@ -103,17 +103,17 @@ void initLab5() {
 	// Second row
 	matrix.add(1.0);
 	matrix.add(0.5);
-	matrix.add(3.5);
+	matrix.add(3.0);
 	matrix.add(1.0);
 	// Third row
 	matrix.add(2.0);
 	matrix.add(1.2);
 	matrix.add(1.3);
-	matrix.add(2.2);
+	matrix.add(2.0);
 	// Fourth row
 	matrix.add(1.2);
 	matrix.add(1.0);
-	matrix.add(2.8);
+	matrix.add(1.8);
 	matrix.add(2.0);
 	// Interpolate and add the results to the scene
 	scene->add(matrix.createMesh(50));
