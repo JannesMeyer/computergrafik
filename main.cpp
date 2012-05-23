@@ -177,7 +177,7 @@ void GLFWCALL handleKeyEvent(int key, int action) {
 	// Toggle wireframe mode
 	if (key == 'W' && action == GLFW_PRESS) {
 		settings.wireframeEnabled = !settings.wireframeEnabled;
-		glPolygonMode(GL_FRONT_AND_BACK, settings.wireframeEnabled ? GL_POINT : GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, settings.wireframeEnabled ? GL_LINE : GL_FILL);
 	}
 	// Toggle vsync
 	if (key == 'V' && action == GLFW_PRESS) {

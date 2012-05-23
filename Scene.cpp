@@ -61,7 +61,7 @@ const void Scene::draw() {
 
 	// Objects
 	setMaterialColor(0, 1, 1);
-	gluSphere(gluNewQuadric(), 2, 50, 50);
+	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {
 		object->draw();
 	}
