@@ -1,17 +1,20 @@
+#include "Point.h"
+#include "Color.h"
 #include "Scene.h"
-#include "Interpolation.h"
-#include "BicubicInterpolation.h"
 #include "RenderObject.h"
 #include "objects/CoordinateAxes.h"
 #include "objects/LineStrip.h"
-#include "objects/Mesh.h"
-#include <vec3.h>
+#include "FpsCounter.h"
 
 #include <GL/glfw.h>
 #include <memory>
+#include <vector>
+#include <string>
+#include <exception>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
-std::shared_ptr<Scene> scene;
 struct {
 	int width;
 	int height;
@@ -19,113 +22,174 @@ struct {
 	bool vsyncEnabled;
 } settings;
 
-// A simple rounding function
-template<class T>
-int round(T x) {
-	return static_cast<int>(x + 0.5);
+std::shared_ptr<Scene> scene;
+std::shared_ptr<LineStrip> line;
+
+// Reads three-dimensional points from a file
+std::vector<Point> readPointsFromFile(std::string filename) {
+	double x, y, z;
+	std::vector<Point> points;
+	std::ifstream file (filename);
+	std::string line; // Cloaks the global variable "line", but who cares
+
+	if (!file) {
+		throw std::runtime_error("Unable to open file");
+	}
+
+	// Read all lines
+	while (file.good()) {
+		// Read one line from the file
+		std::getline(file, line);
+		// Parse the line using a stringstream
+		std::stringstream sstream (line);
+		sstream >> x >> y >> z;
+		//file >> x >> y >> z;
+		points.push_back(Point(x, y, z));
+	}
+	return points;
 }
 
-// Calculates frames per second
-class FpsCounter
-{
-private:
-	double oldTime;
-	double currentTime;
-	double timeDelta;
-	int frameCounter;
-
-public:
-	FpsCounter() {
-		oldTime = glfwGetTime();
-		frameCounter = 0;
-	}
-
-	// Should be called for every frame
-	void tick() {
-		++frameCounter;
-		if (frameCounter < 20) {
-			return;
-		}
-
-		currentTime = glfwGetTime();
-		timeDelta = currentTime - oldTime;
-		if (timeDelta > 1.0) {
-			printFps();
-			// Reset state
-			oldTime = currentTime;
-			frameCounter = 0;
-		}
-	}
-
-	// Calculates and prints the FPS value
-	const void printFps() {
-		double fps = frameCounter / timeDelta;
-		std::cout << round(fps) << " fps" << std::endl;
-	}
-};
-
-// Labor 4
-void initLab4() {
-	// Draw coordinate axes
+// Labor 6.1
+void initLab6() {
+	// Add coordinate axes
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 
-	// Interpolate a line of 4 points
-	Interpolation kurve;
-	kurve.add(2, 2, 2);
-	kurve.add(1, 2, 0);
-	kurve.add(4, 3, 1);
-	kurve.add(3, 4, 0);
-	// Interpolate and add the results to the scene
-	scene->add(kurve.createLineStrip(10));
+	// Read the point data
+	auto points = readPointsFromFile("points.txt");
 
-	// Interpolate a line of 4 points
-	Interpolation kurve2;
-	kurve2.add(1, 1, 1);
-	kurve2.add(1, -2, 0);
-	kurve2.add(-4, 3, 1);
-	kurve2.add(2, 4, 0);
-	// Interpolate and add the results to the scene
-	scene->add(kurve2.createLineStrip(15));
+	// Polygonzug erstellen
+	Color black (0, 0, 0);
+	line = std::shared_ptr<LineStrip>(new LineStrip(points, black));
+	scene->add(line);
+
+	// Ursprüngliche Punkte erstellen
+	Color red (1, 0, 0);
+	std::shared_ptr<LineStrip> kontrollpunkte (new LineStrip(points, red, 2));
+	kontrollpunkte->mode = GL_POINT; // Als Punkte rendern, und nicht als verbundene Linie
+	scene->add(kontrollpunkte);
 }
 
-// Labor 5
-void initLab5() {
-	// Add coordinate axes to the scene
-	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
+// When we increase the level of detail we will have to re-create the points
+// array inserting the new intermediate points into it.
+//
+//	Basically the subdivision works like this. each line,
+//
+//            A  *------------*  B
+//
+//	will be split into 2 new points, Q and R.
+//
+//                   Q    R
+//            A  *---|----|---*  B
+//
+//	Q and R are given by the equations :
+//
+// 		Q = 3/4*A + 1/4*B
+// 		R = 3/4*B + 1/4*A
+//
+void increaseDetail() {
+	unsigned int i;
+	std::vector<Point> newPoints;
 
-	// Interpolate a 4x4 matrix of points
-	BicubicInterpolation matrix = BicubicInterpolation(4, 4);
-	// First row
-	matrix.add(2.0);
-	matrix.add(1.0);
-	matrix.add(1.0);
-	matrix.add(1.0);
-	// Second row
-	matrix.add(1.0);
-	matrix.add(0.5);
-	matrix.add(3.0);
-	matrix.add(1.0);
-	// Third row
-	matrix.add(2.0);
-	matrix.add(1.2);
-	matrix.add(1.3);
-	matrix.add(2.0);
-	// Fourth row
-	matrix.add(1.2);
-	matrix.add(1.0);
-	matrix.add(1.8);
-	matrix.add(2.0);
-	// Interpolate and add the results to the scene
-	scene->add(matrix.createMesh(50));
+	// keep the first point
+	newPoints.push_back(line->points.front());
+	for (i = 0; i < (line->points.size() - 1); ++i) {
+	
+		// get 2 original points
+		const Point& p0 = line->points[i];
+		const Point& p1 = line->points[i+1];
+		Point Q;
+		Point R;
+
+		// average the 2 original points to create 2 new points
+		Q.x = 0.75 * p0.x + 0.25 * p1.x;
+		Q.y = 0.75 * p0.y + 0.25 * p1.y;
+		Q.z = 0.75 * p0.z + 0.25 * p1.z;
+
+		R.x = 0.25 * p0.x + 0.75 * p1.x;
+		R.y = 0.25 * p0.y + 0.75 * p1.y;
+		R.z = 0.25 * p0.z + 0.75 * p1.z;
+
+		newPoints.push_back(Q);
+		newPoints.push_back(R);
+	}
+	// keep the last point
+	newPoints.push_back(line->points.back());
+
+	// update the points array
+	line->points = newPoints;
 }
 
-void initGLWindow(int width, int height) {
-	// Some settings
-	settings.wireframeEnabled = true;
-	settings.vsyncEnabled = true;
-	settings.width = width;
-	settings.height = height;
+// When we decrease the level of detail, we can rather niftily get back
+// to exactly what we had before. Since the original subdivision
+// simply required a basic ratio of both points, we can simply
+// reverse the ratios to get the previous point...
+//
+void decreaseDetail() {
+	// make sure we dont loose any points!!
+	if (line->points.size() <= 4) {
+		return;
+	}
 
+	unsigned int i;
+	std::vector<Point> newPoints;
+
+	// keep the first point
+	newPoints.push_back(line->points.front());
+
+	// step over every 2 points
+	for(i = 1; i < (line->points.size() - 1); i += 2) {
+
+		// get last point found in reduced array
+		const Point& pLast = newPoints.back();
+
+		// get 2 original point
+		const Point& p0 = line->points[i];
+		Point Q;
+
+		// calculate the original point
+		Q.x = p0.x - 0.75 * pLast.x;
+		Q.y = p0.y - 0.75 * pLast.y;
+		Q.z = p0.z - 0.75 * pLast.z;
+
+		Q.x *= 4.0;
+		Q.y *= 4.0;
+		Q.z *= 4.0;
+
+		// add to new curve
+		newPoints.push_back(Q);
+	}
+
+	// copy over points
+	line->points = newPoints;
+}
+
+void GLFWCALL onKeyEvent(int key, int action) {
+	// Toggle wireframe mode
+	if (key == 'W' && action == GLFW_PRESS) {
+		settings.wireframeEnabled = !settings.wireframeEnabled;
+		line->mode = settings.wireframeEnabled ? GL_POINT : GL_FILL;
+	}
+	// Toggle vsync
+	if (key == 'V' && action == GLFW_PRESS) {
+		settings.vsyncEnabled = !settings.vsyncEnabled;
+		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
+	}
+	// Increase level of detail
+	if ((key == '+' || key == 'A') && action == GLFW_PRESS) {
+		increaseDetail();
+	}
+	// Decrease level of detail
+	if ((key == '-' || key == 'D') && action == GLFW_PRESS) {
+		decreaseDetail();
+	}
+	// Close window
+	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
+		glfwCloseWindow();
+		return;
+	}
+}
+
+void onInit() {
 	// Initialize GLFW
 	if (glfwInit() != GL_TRUE) {
 		throw std::runtime_error("Couldn't initialize GLFW");
@@ -136,8 +200,9 @@ void initGLWindow(int width, int height) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
 	}
-	glfwSetWindowTitle("Interpolation demo");
+	glfwSetWindowTitle("Cubic subdivision demo");
 	glfwEnable(GLFW_STICKY_KEYS);
+	glfwSetKeyCallback(onKeyEvent);
 
 	// Initialize GL extension wrangler
 	if (glewInit() != GLEW_OK) {
@@ -150,15 +215,34 @@ void initGLWindow(int width, int height) {
 		glfwSwapInterval(0);
 	}
 
-	// Enable wireframe rendering if wanted
-	glPolygonMode(GL_FRONT_AND_BACK, settings.wireframeEnabled ? GL_POINT : GL_FILL);
 
-	// Set viewport
-	glViewport(0, 0, settings.width, settings.height);
 
+	// Set the background color
+	glClearColor(1, 1, 1, 1);
+	// Depth buffer settings
+	//glClearDepth(1.0);
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LEQUAL);
+
+	// Lighting
+	glDisable(GL_LIGHTING);
 }
 
-void handleInput() {
+void onReshape() {
+	// Set viewport
+	glViewport(0, 0, settings.width, settings.height);
+	
+	// Projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-10, 10, -7.5, 7.5, -10, 60);
+}
+
+void onDraw() {
+	scene->draw();
+}
+
+void onInput() {
 	// Rotate
 	if (glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS) {
 		scene->rotation += 1;
@@ -173,42 +257,38 @@ void handleInput() {
 	}
 }
 
-void GLFWCALL handleKeyEvent(int key, int action) {
-	// Toggle wireframe mode
-	if (key == 'W' && action == GLFW_PRESS) {
-		settings.wireframeEnabled = !settings.wireframeEnabled;
-		glPolygonMode(GL_FRONT_AND_BACK, settings.wireframeEnabled ? GL_LINE : GL_FILL);
-	}
-	// Toggle vsync
-	if (key == 'V' && action == GLFW_PRESS) {
-		settings.vsyncEnabled = !settings.vsyncEnabled;
-		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
-	}
-	// Close window
-	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
-		glfwCloseWindow();
-		return;
-	}
-}
-
 int main() {
-	initGLWindow(800, 600);
+	// Some settings
+	settings.wireframeEnabled = false;
+	settings.vsyncEnabled = true;
+	settings.width = 800;
+	settings.height = 600;
+
+	// Initialize OpenGL
+	onInit();
+	onReshape();
+	// Create a scene container
 	scene = std::shared_ptr<Scene>(new Scene);
-	// Initialize the drawing code
-	initLab5();
-	
-	glfwSetKeyCallback(handleKeyEvent);
+	// Call the setup code
+	try {
+		// Labor 6.1
+		initLab6();
+	} catch(std::exception& e) {
+		std::cout << e.what() << std::endl;
+		system("pause");
+		return 1;
+	}
 
 	// Main loop
 	FpsCounter fps;
 	do {
-		scene->draw();
+		onDraw();
 		glfwSwapBuffers();
 
-		handleInput();
+		onInput();
 		
 		fps.tick();
-	} while(glfwGetWindowParam(GLFW_OPENED));
+	} while (glfwGetWindowParam(GLFW_OPENED));
 
 	return 0;
 }

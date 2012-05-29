@@ -1,4 +1,5 @@
 #include "CoordinateAxes.h"
+
 #include <GL/glew.h>
 
 // Draws coordinate axes
