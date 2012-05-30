@@ -93,6 +93,10 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Point.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="mesh.txt" />
+    <Text Include="points.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
