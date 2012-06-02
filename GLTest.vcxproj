@@ -82,6 +82,7 @@
     <ClCompile Include="objects\CoordinateAxes.cpp" />
     <ClCompile Include="objects\LineStrip.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="objects\Mesh.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +90,7 @@
     <ClInclude Include="FpsCounter.h" />
     <ClInclude Include="objects\CoordinateAxes.h" />
     <ClInclude Include="objects\LineStrip.h" />
+    <ClInclude Include="objects\Mesh.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Point.h" />

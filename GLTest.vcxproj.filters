@@ -36,6 +36,9 @@
     <ClCompile Include="FpsCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="objects\Mesh.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderObject.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="FpsCounter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\Mesh.h">
+      <Filter>Header Files\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

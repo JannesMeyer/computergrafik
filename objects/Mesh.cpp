@@ -1,51 +1,56 @@
 #include "Mesh.h"
-#include <vec3.h>
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <fstream>
 #include <GL/glew.h>
 
-Mesh::Mesh(GLfloat width) : width(width), readonly(false), currentLine(-1) {
+//Mesh("dateiname.txt", 2)
+
+Mesh::Mesh(std::string filename, GLfloat width) : width(width) {
+	int zeilen, spalten;
+	std::ifstream file;
+	std::string line; // Cloaks the global variable "line", but who cares
+
+	file.open(filename);
+
+	if (!file) {
+		throw std::runtime_error("Unable to open file");
+	}
+
+	file >> zeilen;
+	file >> spalten;
+	// I don't know why this is necessary
+	std::getline(file, line);
+
+	// Read all lines
+	while (file.good()) {
+		// Read one line from the file
+		std::getline(file, line);
+		// Parse the line using a stringstream
+		std::stringstream sstream (line);
+		std::vector<Point> zeile;
+		double value;
+		for (int i = 0; i < spalten; ++i) {
+			sstream >> value;
+			zeile.push_back(Point(i, points.size(), value));
+		}
+		points.push_back(zeile);
+	}
+
+	// Generate a display list
 	displayList = glGenLists(1);
-}
-
-void Mesh::newLine() {
-	points.push_back(std::vector<Coord>());
-	++currentLine;
-}
-
-void Mesh::add(double x, double y, double z) {
-	if (readonly) {
-		throw std::runtime_error("This object is read-only.");
-	}
-
-	Coord newPoint = {x, y, z};
-	points[currentLine].push_back(newPoint);
-}
-
-void Mesh::draw() {
-	if (!readonly) {
-		initDisplayList();
-	}
-	glCallList(displayList);
+	initDisplayList();
 }
 
 void Mesh::initDisplayList() {
 	int line, len, i, len2;
-	Coord* p1;
-	Coord* p2;
-	
-	// After this method was called, the class should be read-only
-	readonly = true;
+	Point* p1;
+	Point* p2;
 
 	glNewList(displayList, GL_COMPILE);
 		glPointSize(width);
-
-		//glColor3f(0, 0, 0);
-		//glBegin(GL_QUAD_STRIP);
-		//for (auto& line : points) {
-		//	for (auto& point : line) {
-		//		glVertex3d(point.x, point.z, point.y);
-		//	}
-		//}
-		//glEnd();
 
 		// Skip the last element
 		for (line = 0, len = points.size() - 1; line < len; ++line) {
@@ -59,9 +64,8 @@ void Mesh::initDisplayList() {
 			glEnd();
 		}
 	glEndList();
+}
 
-	//std::vector<Coord>::iterator nextLine;
-	//for (auto line = begin(points); line != end(points) - 1; ++line)
-	//	auto nextLine = line;
-	//	++nextLine;
+void Mesh::draw() {
+	glCallList(displayList);
 }

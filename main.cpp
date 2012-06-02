@@ -4,6 +4,7 @@
 #include "RenderObject.h"
 #include "objects/CoordinateAxes.h"
 #include "objects/LineStrip.h"
+#include "objects/Mesh.h"
 #include "FpsCounter.h"
 
 #include <GL/glfw.h>
@@ -29,8 +30,10 @@ std::shared_ptr<LineStrip> line;
 std::vector<Point> readPointsFromFile(std::string filename) {
 	double x, y, z;
 	std::vector<Point> points;
-	std::ifstream file (filename);
+	std::ifstream file;
 	std::string line; // Cloaks the global variable "line", but who cares
+
+	file.open(filename);
 
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
@@ -50,7 +53,7 @@ std::vector<Point> readPointsFromFile(std::string filename) {
 }
 
 // Labor 6.1
-void initLab6() {
+void initLab61() {
 	// Add coordinate axes
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 
@@ -69,6 +72,14 @@ void initLab6() {
 	scene->add(kontrollpunkte);
 }
 
+void initLab62() {
+	// Add coordinate axes
+	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
+
+	// Rechtecksgitter aus einer Datei einlesen
+	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("mesh.txt", 2));
+	scene->add(rechtecksgitter);
+}
 // When we increase the level of detail we will have to re-create the points
 // array inserting the new intermediate points into it.
 //
@@ -167,7 +178,8 @@ void GLFWCALL onKeyEvent(int key, int action) {
 	// Toggle wireframe mode
 	if (key == 'W' && action == GLFW_PRESS) {
 		settings.wireframeEnabled = !settings.wireframeEnabled;
-		line->mode = settings.wireframeEnabled ? GL_POINT : GL_FILL;
+		//line->mode = settings.wireframeEnabled ? GL_POINT : GL_FILL;
+		scene->setPolygonMode(settings.wireframeEnabled ? GL_LINE : GL_FILL);
 	}
 	// Toggle vsync
 	if (key == 'V' && action == GLFW_PRESS) {
@@ -271,8 +283,7 @@ int main() {
 	scene = std::shared_ptr<Scene>(new Scene);
 	// Call the setup code
 	try {
-		// Labor 6.1
-		initLab6();
+		initLab62();
 	} catch(std::exception& e) {
 		std::cout << e.what() << std::endl;
 		system("pause");

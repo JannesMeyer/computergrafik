@@ -1,27 +1,18 @@
 #pragma once
 #include "../RenderObject.h"
+#include "../Point.h"
 #include <GL/glew.h>
 #include <vector>
-
-struct Coord {
-	double x;
-	double y;
-	double z;
-};
 
 class Mesh : public RenderObject
 {
 private:
-	std::vector<std::vector<Coord>> points;
+	std::vector<std::vector<Point>> points;
 	GLfloat width;
-	bool readonly;
-	int currentLine;
 	GLuint displayList;
 	void initDisplayList();
 public:
-	Mesh(GLfloat width = 2);
-	void newLine();
-	void add(double x, double y, double z);
+	Mesh(std::string filename, GLfloat width = 2);
 	void draw();
 };
 
