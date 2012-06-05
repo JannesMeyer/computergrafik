@@ -116,6 +116,8 @@ void initLab71() {
 	Mesh mesh ("mesh.txt", 2);
 	auto triangleMesh = mesh.createTriangleMesh();
 	scene->add(triangleMesh);
+
+	triangleMesh->saveToFile("test.txt");
 }
 
 // When we increase the level of detail we will have to re-create the points
@@ -336,7 +338,7 @@ int main() {
 
 		onInput();
 		
-		fps.tick();
+		//fps.tick();
 	} while (glfwGetWindowParam(GLFW_OPENED));
 
 	return 0;

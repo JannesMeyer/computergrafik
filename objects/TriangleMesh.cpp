@@ -32,6 +32,24 @@ void TriangleMesh::draw() {
 }
 
 void TriangleMesh::saveToFile(std::string filename) {
-	std::cout << "Dateiausgabe:" << std::endl;
-	std::cout << points.size() << std::endl;
+	// Use the STL namespace this time
+	using namespace std;
+
+	cout << endl << "Dateiausgabe: '" << filename << "'" << endl;
+	cout << points.size() << endl;
+	for (auto& point : points) {
+		cout << point->x << " " << point->y << " " << point->z << endl;
+	}
+	// Find all triangles
+	auto pFirst = begin(points);
+	auto pLast = end(points);
+	int p1, p2, p3;
+	
+	cout << triangles.size() << endl;
+	for (auto& triangle : triangles) {
+		p1 = distance(pFirst, find(pFirst, pLast, triangle.points[0]));
+		p2 = distance(pFirst, find(pFirst, pLast, triangle.points[1]));
+		p3 = distance(pFirst, find(pFirst, pLast, triangle.points[2]));
+		cout << p1 << " " << p2 << " " << p3 << endl;
+	}
 }
