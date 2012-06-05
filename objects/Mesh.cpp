@@ -96,6 +96,13 @@ std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
 		}
 	}
 
-	return std::shared_ptr<TriangleMesh>(new TriangleMesh(triangles));
+	// Create a flattened version of the points array
+	std::vector<std::shared_ptr<Point>> pointsFlat;
+	for (auto& zeile : pointsNew) {
+		for (auto& point : zeile) {
+			pointsFlat.push_back(point);
+		}
+	}
+	return std::shared_ptr<TriangleMesh>(new TriangleMesh(pointsFlat, triangles));
 }
 

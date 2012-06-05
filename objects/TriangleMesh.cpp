@@ -2,8 +2,9 @@
 #include "GL/glew.h"
 #include <iostream>
 
-TriangleMesh::TriangleMesh(std::vector<Triangle> triangles) : triangles(triangles) {
+TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles) : points(points), triangles(triangles) {
 	// TODO: normalenvektoren berechnen
+	//points[8]->z = 6;
 	std::cout << "Constructor TriangleMesh" << std::endl;
 }
 
