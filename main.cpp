@@ -107,6 +107,17 @@ void initLab62() {
 	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("mesh.txt", 2));
 	scene->add(rechtecksgitter);
 }
+
+void initLab71() {
+	// Add coordinate axes
+	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
+	
+	// Rechtecksgitter aus einer Datei einlesen
+	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("mesh.txt", 2));
+	std::shared_ptr<TriangleMesh> triangleMesh (rechtecksgitter->createTriangleMesh());
+	scene->add(triangleMesh);
+}
+
 // When we increase the level of detail we will have to re-create the points
 // array inserting the new intermediate points into it.
 //
@@ -124,15 +135,6 @@ void initLab62() {
 // 		Q = 3/4*A + 1/4*B
 // 		R = 3/4*B + 1/4*A
 //
-
-void initLab63() {
-	// Punkte aus Datei auslesen
-	//Methode, um Rechtecksgitter in Dreiecke zu zerlegen und in Datei abspeichern
-
-	//Einlesen des gespeicherten Meshes
-	//Berechnung der Flächennormalen als normierte Summe aus den Normalen der adjazenten Dreiecke
-	//rendern der Fläche mit Gouraud-SHading und Beleuchtung
-}
 void increaseDetail() {
 	unsigned int i;
 	std::vector<Point> newPoints;
@@ -319,7 +321,7 @@ int main() {
 	scene = std::shared_ptr<Scene>(new Scene);
 	// Call the setup code
 	try {
-		initLab62();
+		initLab71();
 	} catch(std::exception& e) {
 		std::cout << e.what() << std::endl;
 		system("pause");

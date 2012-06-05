@@ -69,3 +69,24 @@ void Mesh::initDisplayList() {
 void Mesh::draw() {
 	glCallList(displayList);
 }
+
+std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
+	std::vector<Triangle> triangles;
+
+	for (unsigned int i = 0; i < points.size() - 1; ++i) {
+		std::vector<std::shared_ptr<Point>> triangle1;
+		triangle1.push_back(std::shared_ptr<Point>(&points[i][0]));
+		triangle1.push_back(std::shared_ptr<Point>(&points[i+1][0+1]));
+		triangle1.push_back(std::shared_ptr<Point>(&points[i+1][0]));
+		// Add the triangle to the list
+		triangles.push_back(triangle1);
+
+		//std::vector<std::shared_ptr<Point>> triangle2;
+		//triangle2.emplace_back(points[i+1][0+1]);
+		//triangle2.emplace_back(points[i][0]);
+		//triangle2.emplace_back(points[i][0+1]);
+		//triangles.push_back(triangle2);
+	}
+
+	return std::shared_ptr<TriangleMesh>(new TriangleMesh(triangles));
+}
