@@ -114,7 +114,8 @@ void initLab71() {
 	
 	// Rechtecksgitter aus einer Datei einlesen
 	Mesh mesh ("mesh.txt", 2);
-	scene->add(mesh.createTriangleMesh());
+	auto triangleMesh = mesh.createTriangleMesh();
+	scene->add(triangleMesh);
 }
 
 // When we increase the level of detail we will have to re-create the points
