@@ -12,9 +12,9 @@
 #include <vector>
 #include <string>
 #include <exception>
-#include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 struct {
 	int width;
@@ -85,7 +85,7 @@ void initLab61() {
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 
 	// Read the point data
-	auto points = readPointsFromFile("points.txt");
+	auto points = readPointsFromFile("data/points.txt");
 
 	// Polygonzug erstellen
 	Color black (0, 0, 0);
@@ -104,7 +104,7 @@ void initLab62() {
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 
 	// Rechtecksgitter aus einer Datei einlesen
-	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("mesh.txt", 2));
+	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("data/mesh.txt", 2));
 	scene->add(rechtecksgitter);
 }
 
@@ -113,11 +113,12 @@ void initLab71() {
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 	
 	// Rechtecksgitter aus einer Datei einlesen
-	Mesh mesh ("mesh.txt", 2);
+	Mesh mesh ("data/mesh.txt", 2);
 	auto triangleMesh = mesh.createTriangleMesh();
 	scene->add(triangleMesh);
 
-	triangleMesh->saveToFile("test.txt");
+	// Dreiecksgitter in eine Datei speichern
+	triangleMesh->saveToFile("data/dreiecke.txt");
 }
 
 // When we increase the level of detail we will have to re-create the points
@@ -252,7 +253,7 @@ void onInit() {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");
 	}
-	glfwSetWindowTitle("Cubic subdivision demo");
+	glfwSetWindowTitle("Exercise 7");
 	glfwEnable(GLFW_STICKY_KEYS);
 	glfwSetKeyCallback(onKeyEvent);
 
@@ -338,7 +339,7 @@ int main() {
 
 		onInput();
 		
-		//fps.tick();
+		fps.tick();
 	} while (glfwGetWindowParam(GLFW_OPENED));
 
 	return 0;

@@ -42,9 +42,6 @@
     <ClCompile Include="objects\TriangleMesh.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\Triangle.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="Gouraud.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -77,19 +74,11 @@
     <ClInclude Include="objects\TriangleMesh.h">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
-    <ClInclude Include="objects\Triangle.h">
-      <Filter>Header Files\objects</Filter>
-    </ClInclude>
     <ClInclude Include="Gouraud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="points.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="mesh.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
+    <ClInclude Include="Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

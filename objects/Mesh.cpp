@@ -10,10 +10,8 @@
 
 Mesh::Mesh(std::string filename, GLfloat width) : width(width) {
 	int zeilen, spalten;
-	std::ifstream file;
+	std::ifstream file (filename);
 	std::string line; // Cloaks the global variable "line", but who cares
-
-	file.open(filename);
 
 	if (!file) {
 		throw std::runtime_error("Unable to open file");

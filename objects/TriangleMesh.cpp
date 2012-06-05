@@ -1,21 +1,19 @@
 #include "TriangleMesh.h"
 #include "GL/glew.h"
+#include <fstream>
 #include <iostream>
 
 TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles) : points(points), triangles(triangles) {
 	// TODO: normalenvektoren berechnen
-	std::cout << "Constructor TriangleMesh" << std::endl;
-}
-
-TriangleMesh::~TriangleMesh() {
-	std::cout << "Destructor TriangleMesh" << std::endl;
 }
 
 void TriangleMesh::draw() {
 	// Draw all triangles
 	glBegin(GL_TRIANGLES);
 	for (auto& triangle : triangles) {
-		auto p = triangle.points[0];
+		std::shared_ptr<Point> p;
+
+		p = triangle.points[0];
 		glVertex3d(p->x, p->z, p->y);
 		
 		p = triangle.points[1];
@@ -25,6 +23,7 @@ void TriangleMesh::draw() {
 		glVertex3d(p->x, p->z, p->y);
 	}
 	glEnd();
+
 	// Some stupid test animation
 	auto z = &points[8]->z;
 	*z += 0.01;
@@ -34,22 +33,31 @@ void TriangleMesh::draw() {
 void TriangleMesh::saveToFile(std::string filename) {
 	// Use the STL namespace this time
 	using namespace std;
+	// Open the file for writing
+	ofstream file (filename);
 
-	cout << endl << "Dateiausgabe: '" << filename << "'" << endl;
-	cout << points.size() << endl;
-	for (auto& point : points) {
-		cout << point->x << " " << point->y << " " << point->z << endl;
+	if (!file) {
+		throw std::runtime_error("Unable to open file");
 	}
-	// Find all triangles
+	cout << "Writing '" << filename << "'" << endl;
+
+	// Output number of points
+	file << points.size() << endl;
+	// Output points
+	for (auto& point : points) {
+		file << point->x << " " << point->y << " " << point->z << endl;
+	}
+
+	// Output number of triangles
+	file << endl << triangles.size() << endl;
+	// Output triangles with point indices
 	auto pFirst = begin(points);
 	auto pLast = end(points);
 	int p1, p2, p3;
-	
-	cout << triangles.size() << endl;
 	for (auto& triangle : triangles) {
 		p1 = distance(pFirst, find(pFirst, pLast, triangle.points[0]));
 		p2 = distance(pFirst, find(pFirst, pLast, triangle.points[1]));
 		p3 = distance(pFirst, find(pFirst, pLast, triangle.points[2]));
-		cout << p1 << " " << p2 << " " << p3 << endl;
+		file << p1 << " " << p2 << " " << p3 << endl;
 	}
 }

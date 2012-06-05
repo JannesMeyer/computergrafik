@@ -1,6 +1,5 @@
 #pragma once
 #include "RenderObject.h"
-
 #include <GL/glew.h>
 #include <memory>
 #include <vector>
