@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FpsCounter.cpp" />
+    <ClCompile Include="Gouraud.cpp" />
     <ClCompile Include="objects\CoordinateAxes.cpp" />
     <ClCompile Include="objects\LineStrip.cpp" />
     <ClCompile Include="main.cpp" />
@@ -90,6 +91,7 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="FpsCounter.h" />
+    <ClInclude Include="Gouraud.h" />
     <ClInclude Include="objects\CoordinateAxes.h" />
     <ClInclude Include="objects\LineStrip.h" />
     <ClInclude Include="objects\Mesh.h" />

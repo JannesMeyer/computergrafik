@@ -90,3 +90,4 @@ std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
 
 	return std::shared_ptr<TriangleMesh>(new TriangleMesh(triangles));
 }
+
