@@ -52,6 +52,33 @@ std::vector<Point> readPointsFromFile(std::string filename) {
 	return points;
 }
 
+// Writes Points in a file
+std::vector<Point> writePointsInFile(std::string filename) {
+	double x, y, z;
+	std::vector<Point> points;
+	std::ifstream file;
+	std::string line; // Cloaks the global variable "line", but who cares
+
+	file.open(filename);
+
+	if (!file) {
+		throw std::runtime_error("Unable to open file");
+	}
+
+	// Read all lines
+	while (file.good()) {
+		// Read one line from the file
+		std::getline(file, line);
+		// Parse the line using a stringstream
+		std::stringstream sstream (line);
+		sstream >> x >> y >> z;
+		//file >> x >> y >> z;
+		points.push_back(Point(x, y, z));
+	}
+	return points;
+}
+
+
 // Labor 6.1
 void initLab61() {
 	// Add coordinate axes
@@ -97,6 +124,15 @@ void initLab62() {
 // 		Q = 3/4*A + 1/4*B
 // 		R = 3/4*B + 1/4*A
 //
+
+void initLab63() {
+	// Punkte aus Datei auslesen
+	//Methode, um Rechtecksgitter in Dreiecke zu zerlegen und in Datei abspeichern
+
+	//Einlesen des gespeicherten Meshes
+	//Berechnung der Flächennormalen als normierte Summe aus den Normalen der adjazenten Dreiecke
+	//rendern der Fläche mit Gouraud-SHading und Beleuchtung
+}
 void increaseDetail() {
 	unsigned int i;
 	std::vector<Point> newPoints;
