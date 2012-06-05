@@ -113,9 +113,8 @@ void initLab71() {
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 	
 	// Rechtecksgitter aus einer Datei einlesen
-	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("mesh.txt", 2));
-	std::shared_ptr<TriangleMesh> triangleMesh (rechtecksgitter->createTriangleMesh());
-	scene->add(triangleMesh);
+	Mesh mesh ("mesh.txt", 2);
+	scene->add(mesh.createTriangleMesh());
 }
 
 // When we increase the level of detail we will have to re-create the points

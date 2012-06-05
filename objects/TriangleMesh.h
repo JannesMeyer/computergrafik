@@ -1,7 +1,7 @@
 #pragma once
 #include "../RenderObject.h"
 #include "../Point.h"
-#include "../Triangle.h"
+#include "Triangle.h"
 #include <vector>
 #include <memory>
 
@@ -11,6 +11,7 @@ private:
 	std::vector<Triangle> triangles;
 public:
 	TriangleMesh(std::vector<Triangle> triangles);
+	~TriangleMesh();
 	void draw();
 };
 

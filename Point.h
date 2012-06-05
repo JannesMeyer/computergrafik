@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 // A structure that holds a point
 struct Point {
@@ -8,8 +9,11 @@ struct Point {
 	Point() : x(0), y(0), z(0) {}
 
 	// Constructor
-	Point(const double a, const double b, const double c) : x(a), y(b), z(c) {}
+	Point(double a, double b, double c) : x(a), y(b), z(c) {
+		//std::cout << "Constructor Point" << std::endl;
+	}
+	//Point(const double a, const double b, const double c) : x(a), y(b), z(c) {}
 
 	// Copy constructor
-	Point(const Point& p) : x(p.x), y(p.y), z(p.z) {}
+	//Point(const Point& p) : x(p.x), y(p.y), z(p.z) {}
 };
