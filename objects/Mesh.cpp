@@ -72,20 +72,27 @@ void Mesh::draw() {
 
 std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
 	std::vector<Triangle> triangles;
+	// Create a copy of all Points as shared pointers
+	std::vector<std::vector<std::shared_ptr<Point>>> pointsNew;
+	for (auto& zeile : points) {
+		std::vector<std::shared_ptr<Point>> zeileNew;
+		for (auto& point : zeile) {
+			zeileNew.push_back(std::shared_ptr<Point>(new Point(point)));
+		}
+		pointsNew.push_back(zeileNew);
+	}
 
-	for (unsigned int i = 0; i < points.size() - 1; ++i) {
-		for (unsigned int j = 0; j < points[i].size() - 1; ++j) {
-			// Calculate first triangle and add it to the list
-			auto p1 = std::shared_ptr<Point>(new Point(points[i][j]));
-			auto p2 = std::shared_ptr<Point>(new Point(points[i+1][j+1]));
-			auto p3 = std::shared_ptr<Point>(new Point(points[i+1][j]));
+	// Create triangles
+	for (unsigned int i = 0; i < pointsNew.size() - 1; ++i) {
+		for (unsigned int j = 0; j < pointsNew[i].size() - 1; ++j) {
+			auto p1 = pointsNew[i][j];
+			auto p2 = pointsNew[i+1][j+1];
+			auto p3 = pointsNew[i+1][j];
+			auto p4 = pointsNew[i][j+1];
+			// First triangle
 			triangles.push_back(Triangle(p1, p2, p3));
-
-			// Calculate second triangle and add it to the list
-			p1 = std::shared_ptr<Point>(new Point(points[i+1][j+1]));
-			p2 = std::shared_ptr<Point>(new Point(points[i][j]));
-			p3 = std::shared_ptr<Point>(new Point(points[i][j+1]));
-			triangles.push_back(Triangle(p1, p2, p3));
+			// Second triangle
+			triangles.push_back(Triangle(p2, p1, p4));
 		}
 	}
 

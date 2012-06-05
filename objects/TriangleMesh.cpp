@@ -16,13 +16,13 @@ void TriangleMesh::draw() {
 	glBegin(GL_TRIANGLES);
 	for (auto& triangle : triangles) {
 		auto p = triangle.points[0];
-		glVertex3d(p->x, p->y, p->z);
+		glVertex3d(p->x, p->z, p->y);
 		
 		p = triangle.points[1];
-		glVertex3d(p->x, p->y, p->z);
+		glVertex3d(p->x, p->z, p->y);
 
 		p = triangle.points[2];
-		glVertex3d(p->x, p->y, p->z);
+		glVertex3d(p->x, p->z, p->y);
 	}
 	glEnd();
 }
