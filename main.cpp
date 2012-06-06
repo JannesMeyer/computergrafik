@@ -86,12 +86,14 @@ void initLab71() {
 	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
 	
 	// Rechtecksgitter aus einer Datei einlesen
-	Mesh mesh ("data/mesh.txt", 2);
-	auto triangleMesh = mesh.createTriangleMesh();
-	scene->add(triangleMesh);
-
+	//Mesh mesh ("data/mesh.txt", 2);
+	//auto triangleMesh = mesh.createTriangleMesh();
 	// Dreiecksgitter in eine Datei speichern
-	triangleMesh->saveToFile("data/dreiecke.txt");
+	//triangleMesh->saveToFile("data/dreiecke.txt");
+
+	// Dreiecksgitter aus einer Datei einlesen
+	auto triangleMesh = std::shared_ptr<TriangleMesh>(new TriangleMesh("data/dreiecke.txt"));
+	scene->add(triangleMesh);
 }
 
 // When we increase the level of detail we will have to re-create the points
@@ -200,14 +202,14 @@ void GLFWCALL onKeyEvent(int key, int action) {
 		settings.vsyncEnabled = !settings.vsyncEnabled;
 		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
 	}
-	// Increase level of detail
+	/*// Increase level of detail
 	if ((key == '+' || key == 'A') && action == GLFW_PRESS) {
 		increaseDetail();
 	}
 	// Decrease level of detail
 	if ((key == '-' || key == 'D') && action == GLFW_PRESS) {
 		decreaseDetail();
-	}
+	}*/
 	// Close window
 	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
 		glfwCloseWindow();
@@ -251,7 +253,7 @@ void onInit() {
 	//glDepthFunc(GL_LEQUAL);
 
 	// Lighting
-	glDisable(GL_LIGHTING);
+	//glDisable(GL_LIGHTING);
 }
 
 void onReshape() {

@@ -11,8 +11,10 @@ class TriangleMesh : public RenderObject
 private:
 	std::vector<std::shared_ptr<Point>> points;
 	std::vector<Triangle> triangles;
+	void calculateNormals();
 public:
 	TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles);
+	TriangleMesh(std::string filename);
 	void draw();
 	void saveToFile(std::string filename);
 };
