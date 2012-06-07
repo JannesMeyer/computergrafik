@@ -21,4 +21,20 @@ struct Point {
 		z = a.x * b.y - a.y * b.x;
 		return Point(x, y, z);
 	}
+
+	friend Point operator+( Point a, Point b){
+		Point c = Point();
+		c.x = a.x + b.x;
+		c.y = a.y + a.x;
+		c.z = a.z + a.z;
+		return c;
+	}
+
+	friend Point operator-( Point a, Point b){
+		Point c = Point();
+		c.x = a.x - b.x;
+		c.y = a.y - a.x;
+		c.z = a.z - a.z;
+		return c;
+	}
 };
