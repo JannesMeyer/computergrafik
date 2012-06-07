@@ -16,5 +16,6 @@ public:
 	TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles);
 	TriangleMesh(std::string filename);
 	void draw();
+	void readFromFile(std::string filename);
 	void saveToFile(std::string filename);
 };

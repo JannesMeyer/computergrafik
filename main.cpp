@@ -92,7 +92,7 @@ void initLab71() {
 	//triangleMesh->saveToFile("data/dreiecke.txt");
 
 	// Dreiecksgitter aus einer Datei einlesen
-	auto triangleMesh = std::shared_ptr<TriangleMesh>(new TriangleMesh("data/dreiecke.txt"));
+	auto triangleMesh = std::shared_ptr<TriangleMesh>(new TriangleMesh("data/billard1.txt"));
 	scene->add(triangleMesh);
 }
 
@@ -223,7 +223,7 @@ void onInit() {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
+	//glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
 	if (glfwOpenWindow(settings.width, settings.height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");

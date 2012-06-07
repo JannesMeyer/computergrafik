@@ -3,16 +3,27 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <GL/glfw.h>
 
 TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles) : points(points), triangles(triangles) {
 	calculateNormals();
 }
 
 TriangleMesh::TriangleMesh(std::string filename) {
+	readFromFile(filename);
+	calculateNormals();
+}
+
+void TriangleMesh::calculateNormals() {
+	std::cout << "Calculating normals" << std::endl;
+	// TODO
+}
+
+void TriangleMesh::readFromFile(std::string filename) {
 	std::ifstream file (filename);
 	std::string line;
 	std::stringstream sstream;
-	int i, num;
+	unsigned int num;
 
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
@@ -20,46 +31,37 @@ TriangleMesh::TriangleMesh(std::string filename) {
 
 	// Read #points
 	file >> num;
-	std::getline(file, line);
 	
+	double t1 = glfwGetTime();
+
 	// Read points
 	std::cout << "Reading points" << std::endl;
-	for (i = 0; i < num; ++i) {
+	for (unsigned int i = 0; i < num; ++i) {
 		if (!file.good()) {
 			throw std::runtime_error("Unexpected end of file");
 		}
 
-		std::getline(file, line);
-		sstream = std::stringstream(line);
 		double x, y, z;
-		sstream >> x >> y >> z;
-		points.push_back(std::shared_ptr<Point>(new Point(x, y, z)));
+		file >> x >> y >> z;
+		points.push_back(std::make_shared<Point>(x, y, z));
 	}
+	double t2 = glfwGetTime();
+	std::cout << (t2-t1) << std::endl;
 
 	// Read #triangles
 	file >> num;
-	std::getline(file, line);
 
 	// Read triangles
 	std::cout << "Reading triangles" << std::endl;
-	for (i = 0; i < num; ++i) {
+	for (unsigned int i = 0; i < num; ++i) {
 		if (!file.good()) {
 			throw std::runtime_error("Unexpected end of file");
 		}
 
-		std::getline(file, line);
-		sstream = std::stringstream(line);
 		int p1, p2, p3;
-		sstream >> p1 >> p2 >> p3;
+		file >> p1 >> p2 >> p3;
 		triangles.push_back(Triangle(points[p1], points[p2], points[p3]));
 	}
-
-	calculateNormals();
-}
-
-void TriangleMesh::calculateNormals() {
-	std::cout << "Calculating normals" << std::endl;
-
 }
 
 void TriangleMesh::saveToFile(std::string filename) {
@@ -96,7 +98,7 @@ void TriangleMesh::saveToFile(std::string filename) {
 
 void TriangleMesh::draw() {
 	// Draw all triangles
-	//glScalef(100, 100, 100);
+	glScalef(100, 100, 100);
 	glBegin(GL_TRIANGLES);
 	for (auto& triangle : triangles) {
 		std::shared_ptr<Point> p;
