@@ -30,10 +30,7 @@ std::shared_ptr<LineStrip> line;
 std::vector<Point> readPointsFromFile(std::string filename) {
 	double x, y, z;
 	std::vector<Point> points;
-	std::ifstream file;
-	std::string line; // Cloaks the global variable "line", but who cares
-
-	file.open(filename);
+	std::ifstream file (filename);
 
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
@@ -42,11 +39,11 @@ std::vector<Point> readPointsFromFile(std::string filename) {
 	// Read all lines
 	while (file.good()) {
 		// Read one line from the file
+		std::string line;
 		std::getline(file, line);
 		// Parse the line using a stringstream
 		std::stringstream sstream (line);
 		sstream >> x >> y >> z;
-		//file >> x >> y >> z;
 		points.push_back(Point(x, y, z));
 	}
 	return points;
@@ -55,14 +52,14 @@ std::vector<Point> readPointsFromFile(std::string filename) {
 // Labor 6.1
 void initLab61() {
 	// Add coordinate axes
-	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
+	scene->add(std::make_shared<CoordinateAxes>());
 
 	// Read the point data
 	auto points = readPointsFromFile("data/points.txt");
 
 	// Polygonzug erstellen
 	Color black (0, 0, 0);
-	line = std::shared_ptr<LineStrip>(new LineStrip(points, black));
+	line = std::make_shared<LineStrip>(points, black);
 	scene->add(line);
 
 	// Ursprüngliche Punkte erstellen
@@ -74,16 +71,17 @@ void initLab61() {
 
 void initLab62() {
 	// Add coordinate axes
-	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
+	scene->add(std::make_shared<CoordinateAxes>());
 
 	// Rechtecksgitter aus einer Datei einlesen
 	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("data/mesh.txt", 2));
+	//auto rechtecksgitter = std::make_shared<Mesh>("data/mesh.txt", 2);
 	scene->add(rechtecksgitter);
 }
 
 void initLab71() {
 	// Add coordinate axes
-	scene->add(std::shared_ptr<CoordinateAxes>(new CoordinateAxes));
+	scene->add(std::make_shared<CoordinateAxes>());
 	
 	// Rechtecksgitter aus einer Datei einlesen
 	//Mesh mesh ("data/mesh.txt", 2);
@@ -92,7 +90,7 @@ void initLab71() {
 	//triangleMesh->saveToFile("data/dreiecke.txt");
 
 	// Dreiecksgitter aus einer Datei einlesen
-	auto triangleMesh = std::shared_ptr<TriangleMesh>(new TriangleMesh("data/billard1.txt"));
+	auto triangleMesh = std::make_shared<TriangleMesh>("data/billard1.txt");
 	scene->add(triangleMesh);
 }
 
@@ -223,7 +221,7 @@ void onInit() {
 		throw std::runtime_error("Couldn't initialize GLFW");
 	}
 	// Open a window with 8x AA
-	//glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
 	if (glfwOpenWindow(settings.width, settings.height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
 		glfwTerminate();
 		throw std::runtime_error("Couldn't open an OpenGL window");

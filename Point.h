@@ -22,19 +22,17 @@ struct Point {
 		return Point(x, y, z);
 	}
 
-	friend Point operator+( Point a, Point b){
-		Point c = Point();
-		c.x = a.x + b.x;
-		c.y = a.y + a.x;
-		c.z = a.z + a.z;
-		return c;
+	// Addition
+	friend Point operator+(Point& a, Point& b) {
+		return Point(a.x + b.x,
+		             a.y + a.x,
+					 a.z + a.z);
 	}
 
-	friend Point operator-( Point a, Point b){
-		Point c = Point();
-		c.x = a.x - b.x;
-		c.y = a.y - a.x;
-		c.z = a.z - a.z;
-		return c;
+	// Subtraction
+	friend Point operator-(Point& a, Point& b) {
+		return Point(a.x - b.x,
+		             a.y - a.x,
+		             a.z - a.z);
 	}
 };
