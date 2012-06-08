@@ -74,7 +74,7 @@ void initLab62() {
 	scene->add(std::make_shared<CoordinateAxes>());
 
 	// Rechtecksgitter aus einer Datei einlesen
-	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("data/mesh.txt", 2));
+	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("data/mesh.txt", 2)); //Wat?
 	//auto rechtecksgitter = std::make_shared<Mesh>("data/mesh.txt", 2);
 	scene->add(rechtecksgitter);
 }
@@ -90,7 +90,7 @@ void initLab71() {
 	//triangleMesh->saveToFile("data/dreiecke.txt");
 
 	// Dreiecksgitter aus einer Datei einlesen
-	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt");
+	auto triangleMesh = std::make_shared<TriangleMesh>("data/billard1.txt");
 	scene->add(triangleMesh);
 }
 
