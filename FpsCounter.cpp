@@ -9,8 +9,7 @@ const int round(T x) {
 	return static_cast<int>(x + 0.5);
 }
 
-FpsCounter::FpsCounter() : oldTime(glfwGetTime()), frameCounter(0)
-{
+FpsCounter::FpsCounter() : oldTime(glfwGetTime()), frameCounter(0) {
 }
 
 // Should be called for every frame
