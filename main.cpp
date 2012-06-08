@@ -90,7 +90,7 @@ void initLab71() {
 	//triangleMesh->saveToFile("data/dreiecke.txt");
 
 	// Dreiecksgitter aus einer Datei einlesen
-	auto triangleMesh = std::make_shared<TriangleMesh>("data/billard1.txt");
+	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt");
 	scene->add(triangleMesh);
 }
 

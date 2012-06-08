@@ -55,7 +55,9 @@ void TriangleMesh::readFromFile(std::string filename) {
 
 void TriangleMesh::calculateNormals() {
 	std::cout << "Calculating normals" << std::endl;
-	// TODO
+	for (auto& t : triangles) {
+		t.calculateNormal();
+	}
 }
 
 void TriangleMesh::saveToFile(std::string filename) {
@@ -72,8 +74,8 @@ void TriangleMesh::saveToFile(std::string filename) {
 	// Output number of points
 	file << points.size() << endl;
 	// Output points
-	for (auto& point : points) {
-		file << point->x << " " << point->y << " " << point->z << endl;
+	for (auto& p : points) {
+		file << p->x << " " << p->y << " " << p->z << endl;
 	}
 
 	// Output number of triangles
@@ -81,29 +83,34 @@ void TriangleMesh::saveToFile(std::string filename) {
 	// Output triangles with point indices
 	auto pFirst = begin(points);
 	auto pLast = end(points);
-	for (auto& triangle : triangles) {
-		int p1 = distance(pFirst, find(pFirst, pLast, triangle.points[0]));
-		int p2 = distance(pFirst, find(pFirst, pLast, triangle.points[1]));
-		int p3 = distance(pFirst, find(pFirst, pLast, triangle.points[2]));
+	for (auto& t : triangles) {
+		int p1 = distance(pFirst, find(pFirst, pLast, t.points[0]));
+		int p2 = distance(pFirst, find(pFirst, pLast, t.points[1]));
+		int p3 = distance(pFirst, find(pFirst, pLast, t.points[2]));
 		file << p1 << " " << p2 << " " << p3 << endl;
 	}
 }
 
 void TriangleMesh::draw() {
+	gluSphere(gluNewQuadric(), 2, 50, 50);
 	glScalef(100, 100, 100);
 	// Draw all triangles
 	glBegin(GL_TRIANGLES);
-	for (auto& triangle : triangles) {
+	for (auto& t : triangles) {
 		std::shared_ptr<Point> p;
-
-		p = triangle.points[0];
-		glVertex3d(p->x, p->z, p->y);
-		
-		p = triangle.points[1];
-		glVertex3d(p->x, p->z, p->y);
-
-		p = triangle.points[2];
-		glVertex3d(p->x, p->z, p->y);
+		//p = triangle.points[0];
+		//glVertex3d(p->x, p->z, p->y);
+		//p = triangle.points[1];
+		//glVertex3d(p->x, p->z, p->y);
+		//p = triangle.points[2];
+		//glVertex3d(p->x, p->z, p->y);
+		glNormal3d(t.normal.x, t.normal.y, t.normal.z);
+		p = t.points[0];
+		glVertex3d(p->x, p->y, p->z);
+		p = t.points[1];
+		glVertex3d(p->x, p->y, p->z);
+		p = t.points[2];
+		glVertex3d(p->x, p->y, p->z);
 	}
 	glEnd();
 }

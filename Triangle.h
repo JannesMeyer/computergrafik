@@ -19,4 +19,8 @@ struct Triangle {
 	//~Triangle() {
 	//	std::cout << "Destructor Triangle" << std::endl;
 	//}
+
+	void Triangle::calculateNormal() {
+		normal = (*points[1] - *points[0]) % (*points[2] - *points[0]);
+	}
 };
