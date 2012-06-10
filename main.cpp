@@ -242,6 +242,11 @@ void onInit() {
 		throw std::runtime_error("Couldn't initialize the GL extension wrangler");
 	}
 
+#ifndef NDEBUG
+	// Print OpenGL version
+	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl << std::endl;
+#endif
+
 	// Disable vsync if wanted
 	if (!settings.vsyncEnabled) {
 		glfwSwapInterval(0);

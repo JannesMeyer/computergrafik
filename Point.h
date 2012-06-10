@@ -1,17 +1,20 @@
 #pragma once
 #include <string>
 #include <cmath>
+#include <cassert>
 #include <iostream>
 
 // A structure that holds a point
 struct Point {
 	double x, y, z;
+	// ...and optionally a normal
+	double normalX, normalY, normalZ;
 	 
 	// Constructor
-	Point() : x(0), y(0), z(0) {}
+	Point() : x(0), y(0), z(0), normalX(0), normalY(0), normalZ(0) {}
 
 	// Constructor
-	Point(const double a, const double b, const double c) : x(a), y(b), z(c) {}
+	Point(const double a, const double b, const double c) : x(a), y(b), z(c), normalX(0), normalY(0), normalZ(0) {}
 
 	// Copy constructor
 	//Point(const Point& p) : x(p.x), y(p.y), z(p.z) {}
@@ -31,6 +34,12 @@ struct Point {
 		             a.y + b.y,
 					 a.z + b.z);
 	}
+	Point operator+=(Point& a) {
+		x += a.x;
+		y += a.y;
+		z += a.z;
+		return *this;
+	}
 
 	// Subtraction
 	static friend Point operator-(Point& a, Point& b) {
@@ -41,10 +50,7 @@ struct Point {
 
 	// Division
 	static friend Point operator/(Point& p, double denominator) {
-		if (denominator == 0.0) {
-			std::cout << "division by zero" << std::endl;
-			return Point(0, 0, 0);
-		}
+		assert(denominator != 0.0);
 		double x = p.x / denominator;
 		double y = p.y / denominator;
 		double z = p.z / denominator;

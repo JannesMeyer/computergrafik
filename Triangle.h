@@ -2,7 +2,6 @@
 #include "Point.h"
 #include <vector>
 #include <memory>
-#include <iostream>
 
 struct Triangle {
 	std::shared_ptr<Point> points[3];
@@ -22,14 +21,6 @@ struct Triangle {
 
 	// Only compute normals when we actually need them
 	void Triangle::calculateNormal() {
-		//std::cout << "a: " << *points[0] << std::endl;
-		//std::cout << "b: " << *points[1] << std::endl;
-		//std::cout << "c: " << *points[2] << std::endl;
-		//std::cout << "b-a: " << (*points[1] - *points[0]) << std::endl;
-		//std::cout << "c-a: " << (*points[2] - *points[0]) << std::endl;
-
 		normal = (*points[1] - *points[0]) % (*points[2] - *points[0]);
-		//std::cout << "Normal: " << normal << std::endl << std::endl;
-		//normal = normal / normal.length();
 	}
 };

@@ -58,6 +58,7 @@ const void Scene::draw() {
 
 	// Objects
 	glEnable(GL_NORMALIZE);
+	//glEnable(GL_RESCALE_NORMAL); // More efficient than GL_NORMALIZE
 	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {
 		object->draw();

@@ -56,8 +56,23 @@ void TriangleMesh::readFromFile(std::string filename) {
 void TriangleMesh::calculateNormals() {
 	std::cout << "Calculating normals" << std::endl;
 	for (auto& t : triangles) {
+		// Compute normals for the triangles
 		t.calculateNormal();
+		// Then for every point
+		t.points[0]->normalX += t.normal.x;
+		t.points[0]->normalY += t.normal.y;
+		t.points[0]->normalZ += t.normal.z;
+
+		t.points[1]->normalX += t.normal.x;
+		t.points[1]->normalY += t.normal.y;
+		t.points[1]->normalZ += t.normal.z;
+
+		t.points[2]->normalX += t.normal.x;
+		t.points[2]->normalY += t.normal.y;
+		t.points[2]->normalZ += t.normal.z;
 	}
+	// Normalize every point
+	//normal = normal / normal.length();
 }
 
 void TriangleMesh::saveToFile(std::string filename) {
@@ -101,12 +116,18 @@ void TriangleMesh::draw() {
 	glBegin(GL_TRIANGLES);
 	for (auto& t : triangles) {
 		std::shared_ptr<Point> p;
-		glNormal3d(t.normal.x, t.normal.y, t.normal.z);
+		//glNormal3d(t.normal.x, t.normal.y, t.normal.z);
+		
 		p = t.points[0];
+		glNormal3d(p->normalX, p->normalY, p->normalZ);
 		glVertex3d(p->x, p->y, p->z);
+
 		p = t.points[1];
+		glNormal3d(p->normalX, p->normalY, p->normalZ);
 		glVertex3d(p->x, p->y, p->z);
+
 		p = t.points[2];
+		glNormal3d(p->normalX, p->normalY, p->normalZ);
 		glVertex3d(p->x, p->y, p->z);
 	}
 	glEnd();
