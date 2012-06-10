@@ -6,8 +6,6 @@
 #include <fstream>
 #include <GL/glew.h>
 
-//Mesh("dateiname.txt", 2)
-
 Mesh::Mesh(std::string filename, GLfloat width) : width(width) {
 	int zeilen, spalten;
 	std::ifstream file (filename);

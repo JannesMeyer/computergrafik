@@ -19,23 +19,23 @@ struct Point {
 	// Cross product
 	static friend Point operator%(Point& a, Point& b) {
 		double x, y, z;
-		x = a.y * b.z - a.z * b.y;
-		y = a.z * b.x - a.x * b.z;
-		z = a.x * b.y - a.y * b.x;
+		x =  (a.y * b.z) - (a.z * b.y);
+		y = -(a.x * b.z) + (a.z * b.x);
+		z =  (a.x * b.y) - (a.y * b.x);
 		return Point(x, y, z);
 	}
 
 	// Addition
 	static friend Point operator+(Point& a, Point& b) {
 		return Point(a.x + b.x,
-		             a.y + b.x,
+		             a.y + b.y,
 					 a.z + b.z);
 	}
 
 	// Subtraction
 	static friend Point operator-(Point& a, Point& b) {
 		return Point(a.x - b.x,
-		             a.y - b.x,
+		             a.y - b.y,
 		             a.z - b.z);
 	}
 
