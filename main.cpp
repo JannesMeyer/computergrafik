@@ -90,8 +90,15 @@ void initLab71() {
 	//triangleMesh->saveToFile("data/dreiecke.txt");
 
 	// Dreiecksgitter aus einer Datei einlesen
-	auto triangleMesh = std::make_shared<TriangleMesh>("data/billard1.txt");
+	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt");
 	scene->add(triangleMesh);
+
+	//auto p1 = std::make_shared<Point>(0.0, 0.0, 0.0);
+	//auto p2 = std::make_shared<Point>(0.0, 1.5, 0.0);
+	//auto p3 = std::make_shared<Point>(2.0, 0.0, 0.0);
+	//auto t = Triangle(p1, p2, p3);
+	//t.calculateNormal();
+
 }
 
 // When we increase the level of detail we will have to re-create the points
@@ -192,7 +199,6 @@ void GLFWCALL onKeyEvent(int key, int action) {
 	// Toggle wireframe mode
 	if (key == 'W' && action == GLFW_PRESS) {
 		settings.wireframeEnabled = !settings.wireframeEnabled;
-		//line->mode = settings.wireframeEnabled ? GL_POINT : GL_FILL;
 		scene->setPolygonMode(settings.wireframeEnabled ? GL_LINE : GL_FILL);
 	}
 	// Toggle vsync
@@ -240,18 +246,6 @@ void onInit() {
 	if (!settings.vsyncEnabled) {
 		glfwSwapInterval(0);
 	}
-
-
-
-	// Set the background color
-	glClearColor(1, 1, 1, 1);
-	// Depth buffer settings
-	//glClearDepth(1.0);
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LEQUAL);
-
-	// Lighting
-	//glDisable(GL_LIGHTING);
 }
 
 void onReshape() {

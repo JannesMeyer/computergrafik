@@ -1,6 +1,15 @@
 #include "Scene.h"
 
 Scene::Scene() : rotation(0), scale(1) {
+	// Set the background color
+	glClearColor(1, 1, 1, 1);
+	// Depth buffer settings
+	glClearDepth(1.0);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	// Lighting
+	glEnable(GL_LIGHTING);
 	lighting();
 }
 
@@ -48,6 +57,8 @@ const void Scene::draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Objects
+	glEnable(GL_NORMALIZE);
+	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {
 		object->draw();
 	}

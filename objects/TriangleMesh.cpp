@@ -11,9 +11,9 @@ TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vect
 TriangleMesh::TriangleMesh(std::string filename) {
 	double t1 = glfwGetTime();
 	readFromFile(filename);
+	calculateNormals();
 	double t2 = glfwGetTime();
 	std::cout << (t2 - t1) << " seconds" << std::endl;
-	calculateNormals();
 }
 
 void TriangleMesh::readFromFile(std::string filename) {
@@ -92,18 +92,15 @@ void TriangleMesh::saveToFile(std::string filename) {
 }
 
 void TriangleMesh::draw() {
-	gluSphere(gluNewQuadric(), 2, 50, 50);
-	glScalef(100, 100, 100);
+	// Set a scale factor for very small models
+	glTranslatef(0, -2, 0);
+	float scale = 50;
+	glScalef(scale, scale, scale);
+
 	// Draw all triangles
 	glBegin(GL_TRIANGLES);
 	for (auto& t : triangles) {
 		std::shared_ptr<Point> p;
-		//p = triangle.points[0];
-		//glVertex3d(p->x, p->z, p->y);
-		//p = triangle.points[1];
-		//glVertex3d(p->x, p->z, p->y);
-		//p = triangle.points[2];
-		//glVertex3d(p->x, p->z, p->y);
 		glNormal3d(t.normal.x, t.normal.y, t.normal.z);
 		p = t.points[0];
 		glVertex3d(p->x, p->y, p->z);

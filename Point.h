@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <cmath>
+#include <iostream>
 
 // A structure that holds a point
 struct Point {
@@ -14,7 +17,7 @@ struct Point {
 	//Point(const Point& p) : x(p.x), y(p.y), z(p.z) {}
 
 	// Cross product
-	friend Point operator%(Point& a, Point& b) {
+	static friend Point operator%(Point& a, Point& b) {
 		double x, y, z;
 		x = a.y * b.z - a.z * b.y;
 		y = a.z * b.x - a.x * b.z;
@@ -23,16 +26,38 @@ struct Point {
 	}
 
 	// Addition
-	friend Point operator+(Point& a, Point& b) {
+	static friend Point operator+(Point& a, Point& b) {
 		return Point(a.x + b.x,
-		             a.y + a.x,
-					 a.z + a.z);
+		             a.y + b.x,
+					 a.z + b.z);
 	}
 
 	// Subtraction
-	friend Point operator-(Point& a, Point& b) {
+	static friend Point operator-(Point& a, Point& b) {
 		return Point(a.x - b.x,
-		             a.y - a.x,
-		             a.z - a.z);
+		             a.y - b.x,
+		             a.z - b.z);
+	}
+
+	// Division
+	static friend Point operator/(Point& p, double denominator) {
+		if (denominator == 0.0) {
+			std::cout << "division by zero" << std::endl;
+			return Point(0, 0, 0);
+		}
+		double x = p.x / denominator;
+		double y = p.y / denominator;
+		double z = p.z / denominator;
+		return Point(x, y, z);
+	}
+	
+	// Make the point printable
+	static friend std::ostream& operator<<(std::ostream& out, const Point& p) {
+		return out << "( " << p.x << ", " << p.y << ", " << p.z << " )";
+	}
+
+	// Compute the length
+	double length() {
+		return sqrt(x*x + y*y + z*z);
 	}
 };
