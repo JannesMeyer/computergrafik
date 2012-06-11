@@ -65,8 +65,7 @@ const void Scene::draw() {
 }
 
 void Scene::setPolygonMode(GLenum mode) {
-	glPolygonMode(GL_FRONT_AND_BACK, mode);
 	for (auto& object : renderObjects) {
-		object->mode = mode;
+		object->setMode(mode);
 	}
 }

@@ -6,7 +6,8 @@
 #include <fstream>
 #include <GL/glew.h>
 
-Mesh::Mesh(std::string filename, GLfloat width) : width(width) {
+Mesh::Mesh(std::string filename, GLfloat width) : width(width)
+{
 	// Read points from file
 	readFromFile(filename);
 	// Generate a display list
@@ -56,10 +57,10 @@ void Mesh::initDisplayList() {
 				Point* p;
 
 				p = &points[y][x];
-				glVertex3d(p->coord.x, p->coord.z, p->coord.y);
+				glVertex3d(p->coord.x, p->coord.y, p->coord.z);
 
 				p = &points[y + 1][x];
-				glVertex3d(p->coord.x, p->coord.z, p->coord.y);
+				glVertex3d(p->coord.x, p->coord.y, p->coord.z);
 			}
 			glEnd();
 		}
@@ -67,7 +68,13 @@ void Mesh::initDisplayList() {
 }
 
 void Mesh::draw() {
+	// Draw this object without lighting, because we didn't calculate normals
+	glDisable(GL_LIGHTING);
+	glColor3f(0.2f, 0.2f, 0.2f);
+
 	glCallList(displayList);
+
+	glEnable(GL_LIGHTING);
 }
 
 std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {

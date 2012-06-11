@@ -3,12 +3,12 @@
 #include <sstream>
 
 // Get points from memory
-LineStrip::LineStrip(std::vector<vec3> points, Color color, GLfloat width) : points(points), color(color), width(width)
-{
-}
+LineStrip::LineStrip(std::vector<vec3> points, Color color, GLfloat width)
+	: points(points), color(color), width(width), lineMode(GL_FILL) {}
 
 // Get points from file
-LineStrip::LineStrip(std::string filename, Color color, GLfloat width) : color(color), width(width)
+LineStrip::LineStrip(std::string filename, Color color, GLfloat width)
+	: color(color), width(width), lineMode(GL_FILL)
 {
 	readFromFile(filename);
 }
@@ -32,10 +32,14 @@ void LineStrip::readFromFile(std::string filename) { // Q: should filename be a 
 }
 
 void LineStrip::draw() {
+	// Disable lighting and depth test
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+
 	// Set color
 	glColor3f(color.r, color.g, color.b);
 
-	if (mode == GL_POINT) {
+	if (lineMode == GL_POINT) {
 		// Draw only points
 		glPointSize(width * 4);
 		glBegin(GL_POINTS);
@@ -50,4 +54,12 @@ void LineStrip::draw() {
 		glVertex3d(p.x, p.y, p.z);
 	}
 	glEnd();
+
+	// Re-enable lighting and depth test
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+}
+
+void LineStrip::setMode(GLenum mode) {
+	// do nothing
 }

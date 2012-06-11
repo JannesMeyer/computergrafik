@@ -106,9 +106,10 @@ void TriangleMesh::saveToFile(std::string filename) {
 }
 
 void TriangleMesh::draw() {
-	glTranslatef(0, -2, 0); // Just shift the models down a little
-	// Set a scale factor for very small models
-	glScalef(50, 50, 50);
+	//glTranslatef(0, -2, 0);
+
+	// Scale factor for very small models
+	glScalef(scale, scale, scale);
 
 	// Draw all triangles
 	glBegin(GL_TRIANGLES);

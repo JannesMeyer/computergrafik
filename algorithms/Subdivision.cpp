@@ -1,6 +1,10 @@
 #include "Subdivision.h"
-/*
-// When we increase the level of detail we will have to re-create the points
+
+Subdivision::Subdivision(std::shared_ptr<LineStrip> line) : line(line)
+{
+}
+
+// When we increase the level of detail we have to re-create the points
 // array inserting the new intermediate points into it.
 //
 //	Basically the subdivision works like this. each line,
@@ -17,19 +21,19 @@
 // 		Q = 3/4*A + 1/4*B
 // 		R = 3/4*B + 1/4*A
 //
-void increaseDetail() {
+void Subdivision::increaseDetail() {
 	unsigned int i;
-	std::vector<Point> newPoints;
+	std::vector<vec3> newPoints;
 
 	// keep the first point
 	newPoints.push_back(line->points.front());
 	for (i = 0; i < (line->points.size() - 1); ++i) {
 	
 		// get 2 original points
-		const Point& p0 = line->points[i];
-		const Point& p1 = line->points[i+1];
-		Point Q;
-		Point R;
+		const vec3& p0 = line->points[i];
+		const vec3& p1 = line->points[i+1];
+		vec3 Q;
+		vec3 R;
 
 		// average the 2 original points to create 2 new points
 		Q.x = 0.75 * p0.x + 0.25 * p1.x;
@@ -55,14 +59,14 @@ void increaseDetail() {
 // simply required a basic ratio of both points, we can simply
 // reverse the ratios to get the previous point...
 //
-void decreaseDetail() {
+void Subdivision::decreaseDetail() {
 	// make sure we dont loose any points!!
 	if (line->points.size() <= 4) {
 		return;
 	}
 
 	unsigned int i;
-	std::vector<Point> newPoints;
+	std::vector<vec3> newPoints;
 
 	// keep the first point
 	newPoints.push_back(line->points.front());
@@ -71,11 +75,11 @@ void decreaseDetail() {
 	for(i = 1; i < (line->points.size() - 1); i += 2) {
 
 		// get last point found in reduced array
-		const Point& pLast = newPoints.back();
+		const vec3& pLast = newPoints.back();
 
 		// get 2 original point
-		const Point& p0 = line->points[i];
-		Point Q;
+		const vec3& p0 = line->points[i];
+		vec3 Q;
 
 		// calculate the original point
 		Q.x = p0.x - 0.75 * pLast.x;
@@ -93,4 +97,3 @@ void decreaseDetail() {
 	// copy over points
 	line->points = newPoints;
 }
-*/

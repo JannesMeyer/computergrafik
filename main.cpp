@@ -2,6 +2,7 @@
 #include "Color.h"
 #include "Scene.h"
 #include "RenderObject.h"
+#include "algorithms/Subdivision.h"
 #include "objects/CoordinateAxes.h"
 #include "objects/LineStrip.h"
 #include "objects/Mesh.h"
@@ -24,30 +25,35 @@ struct Settings {
 Settings settings = {800, 600, false, true};
 
 std::shared_ptr<Scene> scene;
+std::shared_ptr<Subdivision> subdivision;
 
 /*
  * Exercise 6.1
- * Polygonzug einlesen und zeichnen
+ * Polygonzug einlesen, mittels Chaikin's Algorithmus unterteilen und zeichnen.
+ * Es muss viermal die + Taste gedrückt werden, um eine viermalige Unterteilung zu bekommen.
  */
 void initLab61() {
 	// Create a scene
 	scene = std::make_shared<Scene>();
 	scene->add(std::make_shared<CoordinateAxes>());
 
-	// Colors
+	// Define some colors
 	Color black (0, 0, 0);
 	Color red (1, 0, 0);
 
-	// Read LineStrip from file (and save it in a global variable)
+	// Read LineStrip from file
 	auto line = std::make_shared<LineStrip>("data/points.txt", black);
-	scene->add(line);
-
-	// Also add the control points in red
-	auto controlPoints = std::make_shared<LineStrip>(*line); // Create a copy
-	controlPoints->mode = GL_POINT;
+	// Create a copy for the red control points
+	auto controlPoints = std::make_shared<LineStrip>(*line);
+	controlPoints->lineMode = GL_POINT;
 	controlPoints->color = red;
 	controlPoints->width = 2;
+	// Add them to the scene
+	scene->add(line);
 	scene->add(controlPoints);
+
+	// Setup the subdivision algorithm
+	subdivision = std::make_shared<Subdivision>(line);
 }
 
 /*
@@ -60,7 +66,7 @@ void initLab62() {
 	scene->add(std::make_shared<CoordinateAxes>());
 
 	// Read Mesh from file
-	scene->add(std::make_shared<Mesh>("data/mesh.txt", 2.0f));
+	scene->add(std::make_shared<Mesh>("data/mesh.txt"));
 }
 
 /*
@@ -91,7 +97,7 @@ void initLab72() {
 	scene->add(std::make_shared<CoordinateAxes>());
 
 	// Read TriangleMesh from file and scale it by a factor of 50
-	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt", 50);
+	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt", 50.0f);
 	scene->add(triangleMesh);
 }
 
@@ -118,15 +124,19 @@ void GLFWCALL onKeyEvent(int key, int action) {
 		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
 	}
 	
-	//if(subdivision)
-	/*// Increase level of detail
-	if ((key == '+' || key == 'A') && action == GLFW_PRESS) {
-		increaseDetail();
+	// If a subdivision algorithm is active
+	if (subdivision != nullptr) {
+		// Increase level of detail
+		if ((key == '+' || key == 'A') && action == GLFW_PRESS) {
+			std::cout << "Increasing detail" << std::endl;
+			subdivision->increaseDetail();
+		}
+		// Decrease level of detail
+		if ((key == '-' || key == 'D') && action == GLFW_PRESS) {
+			std::cout << "Decreasing detail" << std::endl;
+			subdivision->decreaseDetail();
+		}
 	}
-	// Decrease level of detail
-	if ((key == '-' || key == 'D') && action == GLFW_PRESS) {
-		decreaseDetail();
-	}*/
 
 	// Close window
 	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
@@ -221,7 +231,10 @@ int main() {
 	// Scene setup
 	try {
 		// INITIALIZATION FUNCTION GOES HERE:
-		initLab72();
+		//initLab61();
+		//initLab62();
+		//initLab71();
+		//initLab72();
 	} catch(std::exception& e) {
 		std::cout << e.what() << std::endl;
 		system("pause");

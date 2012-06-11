@@ -15,11 +15,13 @@ private:
 	void readFromFile(std::string filename);
 public:
 	std::vector<vec3> points;
-	GLfloat width;
 	Color color;
+	GLfloat width;
+	GLenum lineMode;
 
 	//LineStrip(LineStrip&&); // move constructor (Q: when to use this?)
 	LineStrip(std::string filename, Color color, GLfloat width = 1);
 	LineStrip(std::vector<vec3> points, Color color, GLfloat width = 1);
 	void draw();
+	void setMode(GLenum mode);
 };
