@@ -2,6 +2,8 @@
 #include "Color.h"
 #include "Scene.h"
 #include "RenderObject.h"
+#include "algorithms/Interpolation.h"
+#include "algorithms/BicubicInterpolation.h"
 #include "algorithms/Subdivision.h"
 #include "objects/CoordinateAxes.h"
 #include "objects/LineStrip.h"
@@ -23,9 +25,71 @@ struct Settings {
 };
 // Default settings
 Settings settings = {800, 600, false, true};
+// Basic colors
+Color black (0, 0, 0);
+Color red (1, 0, 0);
 
 std::shared_ptr<Scene> scene;
 std::shared_ptr<Subdivision> subdivision;
+
+/*
+ * Exercise 4.1
+ * Kubische Interpolation mit uniformen Stützstellen mittels Lagrange-Interpolation
+ */
+void initLab41() {
+	// Create a scene
+	scene = std::make_shared<Scene>();
+	scene->add(std::make_shared<CoordinateAxes>());
+
+	// Interpolate a line of 4 points
+	std::vector<vec3> points;
+	points.emplace_back(2, 2, 2);
+	points.emplace_back(1, 2, 0);
+	points.emplace_back(4, 3, 1);
+	points.emplace_back(3, 4, 0);
+	// Interpolation with a precision of 10
+	auto kurve1 = Interpolation(points).createLineStrip(10, black);
+	scene->add(kurve1);
+	// Control points
+	auto controlPoints1 = std::make_shared<LineStrip>(points, red); // Q: Is it correct to use std::make_shared here?
+	controlPoints1->lineMode = GL_POINT;
+	controlPoints1->color = red;
+	controlPoints1->width = 2;
+	scene->add(controlPoints1);
+
+	//// Interpolate another line of 4 points
+	//std::vector<vec3> points2;
+	//points2.emplace_back(1, 1, 1);
+	//points2.emplace_back(1, -2, 0);
+	//points2.emplace_back(-4, 3, 1);
+	//points2.emplace_back(2, 4, 0);
+	//// Interpolation with precision 15
+	//auto kurve2 = Interpolation(points2).createLineStrip(15, black);
+	//scene->add(kurve2);
+	//// Control points
+	//auto controlPoints2 = std::make_shared<LineStrip>(points2, red);
+	//controlPoints2->lineMode = GL_POINT;
+	//controlPoints2->color = red;
+	//controlPoints2->width = 2;
+	//scene->add(controlPoints2);
+}
+
+/*
+ * Exercise 5.1
+ * Matrix von 4x4 Punkten mittels kubischer Lagrange-Polynome interpolieren
+ */
+void initLab51() {
+	// Create a scene
+	scene = std::make_shared<Scene>();
+	scene->add(std::make_shared<CoordinateAxes>());
+
+	// Read a 4x4 matrix of points
+	BicubicInterpolation interpolation ("data/mesh1.txt");
+
+	// Interpolate with a precision of 50
+	auto mesh = interpolation.createMesh(50);
+	scene->add(mesh->createTriangleMesh());
+}
 
 /*
  * Exercise 6.1
@@ -36,10 +100,6 @@ void initLab61() {
 	// Create a scene
 	scene = std::make_shared<Scene>();
 	scene->add(std::make_shared<CoordinateAxes>());
-
-	// Define some colors
-	Color black (0, 0, 0);
-	Color red (1, 0, 0);
 
 	// Read LineStrip from file
 	auto line = std::make_shared<LineStrip>("data/points.txt", black);
@@ -66,7 +126,7 @@ void initLab62() {
 	scene->add(std::make_shared<CoordinateAxes>());
 
 	// Read Mesh from file
-	scene->add(std::make_shared<Mesh>("data/mesh.txt"));
+	scene->add(std::make_shared<Mesh>("data/mesh2.txt"));
 }
 
 /*
@@ -124,8 +184,8 @@ void GLFWCALL onKeyEvent(int key, int action) {
 		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
 	}
 	
-	// If a subdivision algorithm is active
-	if (subdivision != nullptr) {
+	// If a subdivision algorithm is active (casts the shared_ptr to bool)
+	if (subdivision) {
 		// Increase level of detail
 		if ((key == '+' || key == 'A') && action == GLFW_PRESS) {
 			std::cout << "Increasing detail" << std::endl;
@@ -231,10 +291,12 @@ int main() {
 	// Scene setup
 	try {
 		// INITIALIZATION FUNCTION GOES HERE:
+		//initLab41();
+		//initLab51();
 		//initLab61();
 		//initLab62();
 		//initLab71();
-		//initLab72();
+		initLab72();
 	} catch(std::exception& e) {
 		std::cout << e.what() << std::endl;
 		system("pause");

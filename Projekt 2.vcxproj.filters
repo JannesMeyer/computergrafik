@@ -51,6 +51,12 @@
     <ClCompile Include="algorithms\Subdivision.cpp">
       <Filter>Source Files\algorithms</Filter>
     </ClCompile>
+    <ClCompile Include="algorithms\Interpolation.cpp">
+      <Filter>Source Files\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithms\BicubicInterpolation.cpp">
+      <Filter>Source Files\algorithms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderObject.h">
@@ -87,6 +93,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="algorithms\Subdivision.h">
+      <Filter>Header Files\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithms\Interpolation.h">
+      <Filter>Header Files\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithms\BicubicInterpolation.h">
       <Filter>Header Files\algorithms</Filter>
     </ClInclude>
   </ItemGroup>

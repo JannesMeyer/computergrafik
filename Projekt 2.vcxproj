@@ -81,6 +81,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms\BicubicInterpolation.cpp" />
+    <ClCompile Include="algorithms\Interpolation.cpp" />
     <ClCompile Include="algorithms\Subdivision.cpp" />
     <ClCompile Include="FpsCounter.cpp" />
     <ClCompile Include="objects\CoordinateAxes.cpp" />
@@ -91,6 +93,8 @@
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="algorithms\BicubicInterpolation.h" />
+    <ClInclude Include="algorithms\Interpolation.h" />
     <ClInclude Include="algorithms\Subdivision.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="FpsCounter.h" />

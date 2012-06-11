@@ -6,6 +6,13 @@
 #include <fstream>
 #include <GL/glew.h>
 
+Mesh::Mesh(std::vector<std::vector<Point>> points, GLfloat width) : points(points), width(width)
+{
+	// Generate a display list
+	displayList = glGenLists(1);
+	initDisplayList();
+}
+
 Mesh::Mesh(std::string filename, GLfloat width) : width(width)
 {
 	// Read points from file
