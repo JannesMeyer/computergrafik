@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="algorithms\Subdivision.cpp" />
     <ClCompile Include="FpsCounter.cpp" />
     <ClCompile Include="objects\CoordinateAxes.cpp" />
     <ClCompile Include="objects\LineStrip.cpp" />
@@ -90,6 +91,7 @@
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="algorithms\Subdivision.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="FpsCounter.h" />
     <ClInclude Include="objects\CoordinateAxes.h" />
@@ -100,6 +102,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

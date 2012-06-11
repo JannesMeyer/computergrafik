@@ -12,7 +12,7 @@ public:
 	GLfloat rotation;
 	GLfloat scale;
 
-	Scene();
+	Scene(bool lightingEnabled = true);
 	void add(std::shared_ptr<RenderObject> object);
 	const void lighting();
 	const void setMaterialColor(GLfloat r, GLfloat g, GLfloat b);

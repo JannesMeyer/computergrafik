@@ -12,189 +12,100 @@
 #include <vector>
 #include <string>
 #include <exception>
-#include <fstream>
-#include <sstream>
 #include <iostream>
 
-struct {
+struct Settings {
 	int width;
 	int height;
 	bool wireframeEnabled;
 	bool vsyncEnabled;
-} settings;
+};
+// Default settings
+Settings settings = {800, 600, false, true};
 
 std::shared_ptr<Scene> scene;
-std::shared_ptr<LineStrip> line;
 
-// Reads three-dimensional points from a file
-std::vector<Point> readPointsFromFile(std::string filename) {
-	double x, y, z;
-	std::vector<Point> points;
-	std::ifstream file (filename);
-
-	if (!file) {
-		throw std::runtime_error("Unable to open file");
-	}
-
-	// Read all lines
-	while (file.good()) {
-		// Read one line from the file
-		std::string line;
-		std::getline(file, line);
-		// Parse the line using a stringstream
-		std::stringstream sstream (line);
-		sstream >> x >> y >> z;
-		points.push_back(Point(x, y, z));
-	}
-	return points;
-}
-
-// Labor 6.1
+/*
+ * Exercise 6.1
+ * Polygonzug einlesen und zeichnen
+ */
 void initLab61() {
-	// Add coordinate axes
+	// Create a scene
+	scene = std::make_shared<Scene>();
 	scene->add(std::make_shared<CoordinateAxes>());
 
-	// Read the point data
-	auto points = readPointsFromFile("data/points.txt");
-
-	// Polygonzug erstellen
+	// Colors
 	Color black (0, 0, 0);
-	line = std::make_shared<LineStrip>(points, black);
+	Color red (1, 0, 0);
+
+	// Read LineStrip from file (and save it in a global variable)
+	auto line = std::make_shared<LineStrip>("data/points.txt", black);
 	scene->add(line);
 
-	// Ursprüngliche Punkte erstellen
-	Color red (1, 0, 0);
-	std::shared_ptr<LineStrip> kontrollpunkte (new LineStrip(points, red, 2));
-	kontrollpunkte->mode = GL_POINT; // Als Punkte rendern, und nicht als verbundene Linie
-	scene->add(kontrollpunkte);
+	// Also add the control points in red
+	auto controlPoints = std::make_shared<LineStrip>(*line); // Create a copy
+	controlPoints->mode = GL_POINT;
+	controlPoints->color = red;
+	controlPoints->width = 2;
+	scene->add(controlPoints);
 }
 
+/*
+ * Exercise 6.2
+ * Rechtecksgitter einlesen und zeichnen
+ */
 void initLab62() {
-	// Add coordinate axes
+	// Create a scene
+	scene = std::make_shared<Scene>();
 	scene->add(std::make_shared<CoordinateAxes>());
 
-	// Rechtecksgitter aus einer Datei einlesen
-	std::shared_ptr<Mesh> rechtecksgitter (new Mesh("data/mesh.txt", 2)); //Wat?
-	//auto rechtecksgitter = std::make_shared<Mesh>("data/mesh.txt", 2);
-	scene->add(rechtecksgitter);
+	// Read Mesh from file
+	scene->add(std::make_shared<Mesh>("data/mesh.txt", 2.0f));
 }
 
+/*
+ * Exercise 7.1
+ * Rechtecksgitter einlesen, Dreieckgsgitter berechnen und speichern
+ */
 void initLab71() {
-	// Add coordinate axes
+	// Create a scene
+	scene = std::make_shared<Scene>();
 	scene->add(std::make_shared<CoordinateAxes>());
 	
-	// Rechtecksgitter aus einer Datei einlesen
-	//Mesh mesh ("data/mesh.txt", 2);
-	//auto triangleMesh = mesh.createTriangleMesh();
-	// Dreiecksgitter in eine Datei speichern
-	//triangleMesh->saveToFile("data/dreiecke.txt");
-
-	// Dreiecksgitter aus einer Datei einlesen
-	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt");
+	// Read Mesh from file
+	Mesh mesh ("data/mesh.txt");
+	// Create TriangleMesh
+	auto triangleMesh = mesh.createTriangleMesh();
 	scene->add(triangleMesh);
-
-	//auto p1 = std::make_shared<Point>(0.0, 0.0, 0.0);
-	//auto p2 = std::make_shared<Point>(0.0, 1.5, 0.0);
-	//auto p3 = std::make_shared<Point>(2.0, 0.0, 0.0);
-	//auto t = Triangle(p1, p2, p3);
-	//t.calculateNormal();
-
+	// Save the TriangleMesh to a file
+	triangleMesh->saveToFile("data/trianglemesh.txt");
 }
 
-// When we increase the level of detail we will have to re-create the points
-// array inserting the new intermediate points into it.
-//
-//	Basically the subdivision works like this. each line,
-//
-//            A  *------------*  B
-//
-//	will be split into 2 new points, Q and R.
-//
-//                   Q    R
-//            A  *---|----|---*  B
-//
-//	Q and R are given by the equations :
-//
-// 		Q = 3/4*A + 1/4*B
-// 		R = 3/4*B + 1/4*A
-//
-void increaseDetail() {
-	unsigned int i;
-	std::vector<Point> newPoints;
+/*
+ * Exercise 7.2
+ * Dreiecksgitter einlesen, Punktnormalen berechnen und zeichnen
+ */
+void initLab72() {
+	// Create a scene
+	scene = std::make_shared<Scene>();
+	scene->add(std::make_shared<CoordinateAxes>());
 
-	// keep the first point
-	newPoints.push_back(line->points.front());
-	for (i = 0; i < (line->points.size() - 1); ++i) {
-	
-		// get 2 original points
-		const Point& p0 = line->points[i];
-		const Point& p1 = line->points[i+1];
-		Point Q;
-		Point R;
-
-		// average the 2 original points to create 2 new points
-		Q.x = 0.75 * p0.x + 0.25 * p1.x;
-		Q.y = 0.75 * p0.y + 0.25 * p1.y;
-		Q.z = 0.75 * p0.z + 0.25 * p1.z;
-
-		R.x = 0.25 * p0.x + 0.75 * p1.x;
-		R.y = 0.25 * p0.y + 0.75 * p1.y;
-		R.z = 0.25 * p0.z + 0.75 * p1.z;
-
-		newPoints.push_back(Q);
-		newPoints.push_back(R);
-	}
-	// keep the last point
-	newPoints.push_back(line->points.back());
-
-	// update the points array
-	line->points = newPoints;
+	// Read TriangleMesh from file and scale it by a factor of 50
+	auto triangleMesh = std::make_shared<TriangleMesh>("data/bunny1.txt", 50);
+	scene->add(triangleMesh);
 }
 
-// When we decrease the level of detail, we can rather niftily get back
-// to exactly what we had before. Since the original subdivision
-// simply required a basic ratio of both points, we can simply
-// reverse the ratios to get the previous point...
-//
-void decreaseDetail() {
-	// make sure we dont loose any points!!
-	if (line->points.size() <= 4) {
-		return;
-	}
 
-	unsigned int i;
-	std::vector<Point> newPoints;
 
-	// keep the first point
-	newPoints.push_back(line->points.front());
 
-	// step over every 2 points
-	for(i = 1; i < (line->points.size() - 1); i += 2) {
 
-		// get last point found in reduced array
-		const Point& pLast = newPoints.back();
 
-		// get 2 original point
-		const Point& p0 = line->points[i];
-		Point Q;
 
-		// calculate the original point
-		Q.x = p0.x - 0.75 * pLast.x;
-		Q.y = p0.y - 0.75 * pLast.y;
-		Q.z = p0.z - 0.75 * pLast.z;
 
-		Q.x *= 4.0;
-		Q.y *= 4.0;
-		Q.z *= 4.0;
 
-		// add to new curve
-		newPoints.push_back(Q);
-	}
-
-	// copy over points
-	line->points = newPoints;
-}
-
+/*
+ * Listen to key events
+ */
 void GLFWCALL onKeyEvent(int key, int action) {
 	// Toggle wireframe mode
 	if (key == 'W' && action == GLFW_PRESS) {
@@ -206,6 +117,8 @@ void GLFWCALL onKeyEvent(int key, int action) {
 		settings.vsyncEnabled = !settings.vsyncEnabled;
 		glfwSwapInterval(static_cast<int>(settings.vsyncEnabled));
 	}
+	
+	//if(subdivision)
 	/*// Increase level of detail
 	if ((key == '+' || key == 'A') && action == GLFW_PRESS) {
 		increaseDetail();
@@ -214,6 +127,7 @@ void GLFWCALL onKeyEvent(int key, int action) {
 	if ((key == '-' || key == 'D') && action == GLFW_PRESS) {
 		decreaseDetail();
 	}*/
+
 	// Close window
 	if (key == GLFW_KEY_ESC && action == GLFW_PRESS) {
 		glfwCloseWindow();
@@ -221,52 +135,10 @@ void GLFWCALL onKeyEvent(int key, int action) {
 	}
 }
 
-void onInit() {
-	// Initialize GLFW
-	if (glfwInit() != GL_TRUE) {
-		throw std::runtime_error("Couldn't initialize GLFW");
-	}
-	// Open a window with 8x AA
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-	if (glfwOpenWindow(settings.width, settings.height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
-		glfwTerminate();
-		throw std::runtime_error("Couldn't open an OpenGL window");
-	}
-	glfwSetWindowTitle("Exercise 7");
-	glfwEnable(GLFW_STICKY_KEYS);
-	glfwSetKeyCallback(onKeyEvent);
-
-	// Initialize GL extension wrangler
-	if (glewInit() != GLEW_OK) {
-		glfwTerminate();
-		throw std::runtime_error("Couldn't initialize the GL extension wrangler");
-	}
-
-#ifndef NDEBUG
-	// Print OpenGL version
-	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl << std::endl;
-#endif
-
-	// Disable vsync if wanted
-	if (!settings.vsyncEnabled) {
-		glfwSwapInterval(0);
-	}
-}
-
-void onReshape() {
-	// Set viewport
-	glViewport(0, 0, settings.width, settings.height);
-	
-	// Projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-10, 10, -7.5, 7.5, -10, 60);
-}
-
-void onDraw() {
-	scene->draw();
-}
-
+/*
+ * These key events are executed continuously while the key
+ * is held down, not just once per key press.
+ */
 void onInput() {
 	// Rotate
 	if (glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS) {
@@ -282,21 +154,74 @@ void onInput() {
 	}
 }
 
-int main() {
-	// Some settings
-	settings.wireframeEnabled = false;
-	settings.vsyncEnabled = true;
-	settings.width = 800;
-	settings.height = 600;
+/*
+ * Create an OpenGL context and a window
+ */
+void onInit() {
+	// Initialize GLFW
+	if (glfwInit() != GL_TRUE) {
+		throw std::runtime_error("Couldn't initialize GLFW");
+	}
+	// Open a window with 8x AA
+	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+	if (glfwOpenWindow(settings.width, settings.height, 8, 8, 8, 8, 24, 0, GLFW_WINDOW) != GL_TRUE) {
+		glfwTerminate();
+		throw std::runtime_error("Couldn't open an OpenGL window");
+	}
+	glfwSetWindowTitle("Projekt 2");
+	glfwEnable(GLFW_STICKY_KEYS);
+	glfwSetKeyCallback(onKeyEvent);
 
+	// Initialize GL extension wrangler
+	if (glewInit() != GLEW_OK) {
+		glfwTerminate();
+		throw std::runtime_error("Couldn't initialize the GL extension wrangler");
+	}
+
+	// Print OpenGL version
+	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl << std::endl;
+
+	// Disable vsync if wanted
+	if (!settings.vsyncEnabled) {
+		glfwSwapInterval(0);
+	}
+}
+
+/*
+ * Setup the viewport and projection matrix
+ */
+void onReshape() {
+	// Set viewport
+	glViewport(0, 0, settings.width, settings.height);
+	
+	// Projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-10, 10, -7.5, 7.5, -10, 60);
+}
+
+
+
+
+
+/*
+ * Main function
+ */
+int main() {
 	// Initialize OpenGL
-	onInit();
-	onReshape();
-	// Create a scene container
-	scene = std::shared_ptr<Scene>(new Scene);
-	// Call the setup code
 	try {
-		initLab71();
+		onInit();
+		onReshape();
+	} catch(std::exception& e) {
+		std::cout << e.what() << std::endl;
+		system("pause");
+		return 1;
+	}
+
+	// Scene setup
+	try {
+		// INITIALIZATION FUNCTION GOES HERE:
+		initLab72();
 	} catch(std::exception& e) {
 		std::cout << e.what() << std::endl;
 		system("pause");
@@ -306,11 +231,14 @@ int main() {
 	// Main loop
 	FpsCounter fps;
 	do {
-		onDraw();
+		// Draw the scene and swap buffers
+		scene->draw();
 		glfwSwapBuffers();
 
+		// Handle input
 		onInput();
 		
+		// Signal a completed frame to the FpsCounter
 		fps.tick();
 	} while (glfwGetWindowParam(GLFW_OPENED));
 

@@ -1,16 +1,14 @@
 #include "Scene.h"
 
-Scene::Scene() : rotation(0), scale(1) {
-	// Set the background color
+Scene::Scene(bool lightingEnabled) : rotation(0), scale(1) {
+	// Background color
 	glClearColor(1, 1, 1, 1);
-	// Depth buffer settings
-	glClearDepth(1.0);
+	// Enable depth buffer
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
 
-	// Lighting
-	glEnable(GL_LIGHTING);
-	lighting();
+	if (lightingEnabled) {
+		lighting();
+	}
 }
 
 void Scene::add(std::shared_ptr<RenderObject> object) {
@@ -59,6 +57,7 @@ const void Scene::draw() {
 	// Objects
 	glEnable(GL_NORMALIZE);
 	//glEnable(GL_RESCALE_NORMAL); // More efficient than GL_NORMALIZE
+
 	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {
 		object->draw();

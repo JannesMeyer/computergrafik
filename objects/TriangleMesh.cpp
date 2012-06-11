@@ -1,19 +1,25 @@
 #include "TriangleMesh.h"
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
-TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles) : points(points), triangles(triangles) {
-	calculateNormals();
-}
-
-TriangleMesh::TriangleMesh(std::string filename) {
+TriangleMesh::TriangleMesh(std::string filename, GLfloat scale) : scale(scale) {
+	// Measure the loading time
 	double t1 = glfwGetTime();
+
+	// Read triangles
 	readFromFile(filename);
 	calculateNormals();
+	
+	// Print load time
 	double t2 = glfwGetTime();
 	std::cout << (t2 - t1) << " seconds" << std::endl;
+}
+
+TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles, GLfloat scale) : points(points), triangles(triangles), scale(scale) {
+	calculateNormals();
 }
 
 void TriangleMesh::readFromFile(std::string filename) {
@@ -58,21 +64,15 @@ void TriangleMesh::calculateNormals() {
 	for (auto& t : triangles) {
 		// Compute normals for the triangles
 		t.calculateNormal();
-		// Then for every point
-		t.points[0]->normalX += t.normal.x;
-		t.points[0]->normalY += t.normal.y;
-		t.points[0]->normalZ += t.normal.z;
-
-		t.points[1]->normalX += t.normal.x;
-		t.points[1]->normalY += t.normal.y;
-		t.points[1]->normalZ += t.normal.z;
-
-		t.points[2]->normalX += t.normal.x;
-		t.points[2]->normalY += t.normal.y;
-		t.points[2]->normalZ += t.normal.z;
+		// And add them to all of their points
+		t.points[0]->normal += t.normal;
+		t.points[1]->normal += t.normal;
+		t.points[2]->normal += t.normal;
 	}
-	// Normalize every point
-	//normal = normal / normal.length();
+	// Normalize every point's normal
+	for (auto& p : points) {
+		p->normal.normalize();
+	}
 }
 
 void TriangleMesh::saveToFile(std::string filename) {
@@ -80,7 +80,6 @@ void TriangleMesh::saveToFile(std::string filename) {
 	using namespace std;
 	// Open the file for writing
 	ofstream file (filename);
-
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
 	}
@@ -90,7 +89,7 @@ void TriangleMesh::saveToFile(std::string filename) {
 	file << points.size() << endl;
 	// Output points
 	for (auto& p : points) {
-		file << p->x << " " << p->y << " " << p->z << endl;
+		file << p->coord.x << " " << p->coord.y << " " << p->coord.z << endl;
 	}
 
 	// Output number of triangles
@@ -107,28 +106,26 @@ void TriangleMesh::saveToFile(std::string filename) {
 }
 
 void TriangleMesh::draw() {
+	glTranslatef(0, -2, 0); // Just shift the models down a little
 	// Set a scale factor for very small models
-	glTranslatef(0, -2, 0);
-	float scale = 50;
-	glScalef(scale, scale, scale);
+	glScalef(50, 50, 50);
 
 	// Draw all triangles
 	glBegin(GL_TRIANGLES);
 	for (auto& t : triangles) {
 		std::shared_ptr<Point> p;
-		//glNormal3d(t.normal.x, t.normal.y, t.normal.z);
 		
 		p = t.points[0];
-		glNormal3d(p->normalX, p->normalY, p->normalZ);
-		glVertex3d(p->x, p->y, p->z);
+		glNormal3d(p->normal.x, p->normal.y, p->normal.z);
+		glVertex3d(p->coord.x, p->coord.y, p->coord.z);
 
 		p = t.points[1];
-		glNormal3d(p->normalX, p->normalY, p->normalZ);
-		glVertex3d(p->x, p->y, p->z);
+		glNormal3d(p->normal.x, p->normal.y, p->normal.z);
+		glVertex3d(p->coord.x, p->coord.y, p->coord.z);
 
 		p = t.points[2];
-		glNormal3d(p->normalX, p->normalY, p->normalZ);
-		glVertex3d(p->x, p->y, p->z);
+		glNormal3d(p->normal.x, p->normal.y, p->normal.z);
+		glVertex3d(p->coord.x, p->coord.y, p->coord.z);
 	}
 	glEnd();
 }

@@ -7,55 +7,59 @@
 #include <GL/glew.h>
 
 Mesh::Mesh(std::string filename, GLfloat width) : width(width) {
-	int zeilen, spalten;
-	std::ifstream file (filename);
-	std::string line; // Cloaks the global variable "line", but who cares
-
-	if (!file) {
-		throw std::runtime_error("Unable to open file");
-	}
-
-	file >> zeilen;
-	file >> spalten;
-	// I don't know why this is necessary
-	std::getline(file, line);
-
-	// Read all lines
-	while (file.good()) {
-		// Read one line from the file
-		std::getline(file, line);
-		// Parse the line using a stringstream
-		std::stringstream sstream (line);
-		std::vector<Point> zeile;
-		double value;
-		for (int i = 0; i < spalten; ++i) {
-			sstream >> value;
-			zeile.push_back(Point(i, points.size(), value));
-		}
-		points.push_back(zeile);
-	}
-
+	// Read points from file
+	readFromFile(filename);
 	// Generate a display list
 	displayList = glGenLists(1);
 	initDisplayList();
 }
 
-void Mesh::initDisplayList() {
-	int line, len, i, len2;
-	Point* p1;
-	Point* p2;
+void Mesh::readFromFile(std::string filename) { // Q: Should this be called by reference?
+	std::ifstream file (filename);
+	if (!file) {
+		throw std::runtime_error("Unable to open file");
+	}
 
+	int zeilen, spalten;
+	file >> zeilen;
+	file >> spalten;
+
+	std::string line;
+	std::getline(file, line); // I don't know why this is necessary
+
+	while (file.good()) {
+		// Read one line from the file
+		std::getline(file, line);
+		// Parse the line using a stringstream
+		std::stringstream sstream (line);
+		// Create the points and add them to a vector
+		std::vector<Point> zeile;
+		for (int i = 0; i < spalten; ++i) {
+			double value;
+			sstream >> value;
+			zeile.push_back(Point(i, points.size(), value));
+		}
+		points.push_back(zeile);
+	}
+}
+
+void Mesh::initDisplayList() {
 	glNewList(displayList, GL_COMPILE);
 		glPointSize(width);
 
 		// Skip the last element
-		for (line = 0, len = points.size() - 1; line < len; ++line) {
+		int rows = points.size() - 1;
+		int columns = points[0].size();
+		for (int y = 0; y < rows; ++y) {
 			glBegin(GL_QUAD_STRIP);
-			for (i = 0, len2 = points[line].size(); i < len2; ++i) {
-				p1 = &points[line][i];
-				p2 = &points[line + 1][i];
-				glVertex3d(p1->x, p1->z, p1->y);
-				glVertex3d(p2->x, p2->z, p2->y);
+			for (int x = 0; x < columns; ++x) {
+				Point* p;
+
+				p = &points[y][x];
+				glVertex3d(p->coord.x, p->coord.z, p->coord.y);
+
+				p = &points[y + 1][x];
+				glVertex3d(p->coord.x, p->coord.z, p->coord.y);
 			}
 			glEnd();
 		}
@@ -68,6 +72,7 @@ void Mesh::draw() {
 
 std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
 	std::vector<Triangle> triangles;
+
 	// Create a copy of all Points as shared pointers
 	std::vector<std::vector<std::shared_ptr<Point>>> pointsNew;
 	for (auto& zeile : points) {

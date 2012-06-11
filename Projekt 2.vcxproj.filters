@@ -19,6 +19,12 @@
     <Filter Include="Source Files\objects">
       <UniqueIdentifier>{c77e3fba-b803-4a41-9899-21cbdd8dc329}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\algorithms">
+      <UniqueIdentifier>{b36ebb4f-fd4b-4f50-a470-7113b380c513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\algorithms">
+      <UniqueIdentifier>{66c6a57a-98cc-410a-b3de-dbdfcc26f06a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="objects\TriangleMesh.cpp">
       <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="algorithms\Subdivision.cpp">
+      <Filter>Source Files\algorithms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithms\Subdivision.h">
+      <Filter>Header Files\algorithms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
