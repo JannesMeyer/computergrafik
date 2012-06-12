@@ -12,7 +12,4 @@ struct Color {
 	Color() : r(0), g(0), b(0), a(1) {}
 	Color(const GLfloat r, const GLfloat g, const GLfloat b) : r(r), g(g), b(b), a(1) {}
 	Color(const GLfloat r, const GLfloat g, const GLfloat b, const GLfloat a) : r(r), g(g), b(b), a(a) {}
-
-	// Copy constructor (Q: When to use this?)
-	//Color(const Color& color) : r(color.r), g(color.g), b(color.b), a(color.a) {}
 };

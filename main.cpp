@@ -51,7 +51,7 @@ void initLab41() {
 	auto kurve1 = Interpolation(points).createLineStrip(10, black);
 	scene->add(kurve1);
 	// Control points
-	auto controlPoints1 = std::make_shared<LineStrip>(points, red); // Q: Is it correct to use std::make_shared here?
+	auto controlPoints1 = std::make_shared<LineStrip>(points, red);
 	controlPoints1->lineMode = GL_POINT;
 	controlPoints1->color = red;
 	controlPoints1->width = 2;
@@ -139,7 +139,7 @@ void initLab71() {
 	scene->add(std::make_shared<CoordinateAxes>());
 	
 	// Read Mesh from file
-	Mesh mesh ("data/mesh.txt");
+	Mesh mesh ("data/mesh2.txt");
 	// Create TriangleMesh
 	auto triangleMesh = mesh.createTriangleMesh();
 	scene->add(triangleMesh);

@@ -1,11 +1,12 @@
 #pragma once
 
-// Calculates frames per second
+/*
+ * Calculates frames per second
+ */
 class FpsCounter
 {
 private:
 	double oldTime;
-	double currentTime;
 	double timeDelta;
 	int frameCounter;
 

@@ -14,11 +14,11 @@ private:
 	std::vector<Triangle> triangles;
 	float scale;
 
-	void readFromFile(std::string filename);
+	void readFromFile(const std::string& filename);
 	void calculateNormals();
 public:
-	TriangleMesh(std::string filename, GLfloat scale = 1);
+	TriangleMesh(const std::string& filename, GLfloat scale = 1);
 	TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles, GLfloat scale = 1);
 	void draw();
-	void saveToFile(std::string filename);
+	void saveToFile(const std::string& filename);
 };

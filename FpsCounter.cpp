@@ -15,11 +15,11 @@ FpsCounter::FpsCounter() : oldTime(glfwGetTime()), frameCounter(0) {
 // Should be called for every frame
 void FpsCounter::tick() {
 	++frameCounter;
-	if (frameCounter < 20) {
+	if (frameCounter < 10) {
 		return;
 	}
 
-	currentTime = glfwGetTime();
+	double currentTime = glfwGetTime();
 	timeDelta = currentTime - oldTime;
 	if (timeDelta > 1.0) {
 		printFps();

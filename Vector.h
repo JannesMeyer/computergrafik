@@ -56,10 +56,6 @@ struct Vector3 {
 	// Normalize
 	void normalize() {
 		*this /= length();
-		//T factor = 1 / length();
-		//x *= factor;
-		//y *= factor;
-		//z *= factor;
 	}
 
 	// Normalized
@@ -71,26 +67,27 @@ struct Vector3 {
 
 
 	// Addition
-    Vector3 operator+(const Vector3& v) const { // const means that it doesn't modify the class
+    Vector3 operator+(const Vector3& v) const {
         return Vector3(x + v.x,
 		               y + v.y,
 					   z + v.z);
     }
-	void operator+=(const Vector3& v) {
+	Vector3& operator+=(const Vector3& v) {
 		x += v.x;
 		y += v.y;
 		z += v.z;
-		//return *this;
+		return *this; // useful for: a += b += c
+		// TODO: auch bei anderen operationen
 	}
-	// Q: What's this useful for?
-	/*static friend Vector3 operator+(Vector3& a, Vector3& b) {
+	// TODO: outside of a class
+	/*Vector3 operator+(Vector3& a, Vector3& b) {
 		return Vector3(a.x + b.x,
 		             a.y + b.y,
 					 a.z + b.z);
 	}*/
 
 	// Subtraction
-	Vector3 operator-(const Vector3& v) const { // const means that it doesn't modify the class
+	Vector3 operator-(const Vector3& v) const {
         return Vector3(x - v.x,
 		               y - v.y,
 					   z - v.z);
@@ -108,13 +105,15 @@ struct Vector3 {
 
 	// Piecewise division
 	Vector3 operator/(T denominator) const {
-		assert(denominator != 0);
+		//assert(denominator != 0);
+		if (denominator == 0) return;
 		return Vector3(x / denominator,
 		               y / denominator,
 		               z / denominator);
 	}
 	void operator/=(T denominator) {
 		//assert(denominator != 0);
+		if (denominator == 0) return;
 		x /= denominator;
 		y /= denominator;
 		z /= denominator;

@@ -55,8 +55,7 @@ const void Scene::draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Objects
-	glEnable(GL_NORMALIZE);
-	//glEnable(GL_RESCALE_NORMAL); // More efficient than GL_NORMALIZE
+	glEnable(GL_RESCALE_NORMAL); // More efficient than GL_NORMALIZE
 
 	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {

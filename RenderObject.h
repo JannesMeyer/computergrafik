@@ -1,8 +1,10 @@
 #pragma once
 #include <GL/glew.h>
-#include <iostream>
 
-// Abstract class that represents an object which can be rendered
+/*
+ * Abstract class that represents an object which can be rendered
+ * Author: Jannes Meyer
+ */
 class RenderObject
 {
 protected:

@@ -13,7 +13,7 @@ Mesh::Mesh(std::vector<std::vector<Point>> points, GLfloat width) : points(point
 	initDisplayList();
 }
 
-Mesh::Mesh(std::string filename, GLfloat width) : width(width)
+Mesh::Mesh(const std::string& filename, GLfloat width) : width(width)
 {
 	// Read points from file
 	readFromFile(filename);
@@ -22,7 +22,7 @@ Mesh::Mesh(std::string filename, GLfloat width) : width(width)
 	initDisplayList();
 }
 
-void Mesh::readFromFile(std::string filename) { // Q: Should this be called by reference?
+void Mesh::readFromFile(const std::string& filename) {
 	std::ifstream file (filename);
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
@@ -33,7 +33,7 @@ void Mesh::readFromFile(std::string filename) { // Q: Should this be called by r
 	file >> spalten;
 
 	std::string line;
-	std::getline(file, line); // I don't know why this is necessary
+	std::getline(file, line); // TODO: I don't know why this is necessary
 
 	while (file.good()) {
 		// Read one line from the file
@@ -92,7 +92,7 @@ std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
 	for (auto& zeile : points) {
 		std::vector<std::shared_ptr<Point>> zeileNew;
 		for (auto& point : zeile) {
-			zeileNew.push_back(std::shared_ptr<Point>(new Point(point)));
+			zeileNew.push_back(std::make_shared<Point>(point));
 		}
 		pointsNew.push_back(zeileNew);
 	}
@@ -118,6 +118,6 @@ std::shared_ptr<TriangleMesh> Mesh::createTriangleMesh() {
 			pointsFlat.push_back(point);
 		}
 	}
-	return std::shared_ptr<TriangleMesh>(new TriangleMesh(pointsFlat, triangles));
+	return std::make_shared<TriangleMesh>(pointsFlat, triangles);
 }
 

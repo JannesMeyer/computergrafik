@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
-TriangleMesh::TriangleMesh(std::string filename, GLfloat scale) : scale(scale) {
+TriangleMesh::TriangleMesh(const std::string& filename, GLfloat scale) : scale(scale) {
 	// Measure the loading time
 	double t1 = glfwGetTime();
 
@@ -15,14 +15,16 @@ TriangleMesh::TriangleMesh(std::string filename, GLfloat scale) : scale(scale) {
 	
 	// Print load time
 	double t2 = glfwGetTime();
-	std::cout << (t2 - t1) << " seconds" << std::endl;
+	std::cout << (t2 - t1) << " seconds" << std::endl << std::endl;
 }
 
-TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles, GLfloat scale) : points(points), triangles(triangles), scale(scale) {
+TriangleMesh::TriangleMesh(std::vector<std::shared_ptr<Point>> points, std::vector<Triangle> triangles, GLfloat scale)
+	: points(points), triangles(triangles), scale(scale)
+{
 	calculateNormals();
 }
 
-void TriangleMesh::readFromFile(std::string filename) {
+void TriangleMesh::readFromFile(const std::string& filename) {
 	std::ifstream file (filename);
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
@@ -75,7 +77,7 @@ void TriangleMesh::calculateNormals() {
 	}
 }
 
-void TriangleMesh::saveToFile(std::string filename) {
+void TriangleMesh::saveToFile(const std::string& filename) {
 	// Use the STL namespace this time
 	using namespace std;
 	// Open the file for writing

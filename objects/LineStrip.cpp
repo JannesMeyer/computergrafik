@@ -7,13 +7,13 @@ LineStrip::LineStrip(std::vector<vec3> points, Color color, GLfloat width)
 	: points(points), color(color), width(width), lineMode(GL_FILL) {}
 
 // Get points from file
-LineStrip::LineStrip(std::string filename, Color color, GLfloat width)
+LineStrip::LineStrip(const std::string& filename, Color color, GLfloat width)
 	: color(color), width(width), lineMode(GL_FILL)
 {
 	readFromFile(filename);
 }
 
-void LineStrip::readFromFile(std::string filename) { // Q: should filename be a call by reference instead of by copy?
+void LineStrip::readFromFile(const std::string& filename) {
 	std::ifstream file (filename);
 	if (!file) {
 		throw std::runtime_error("Unable to open file");
