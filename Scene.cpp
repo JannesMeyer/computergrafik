@@ -16,24 +16,28 @@ void Scene::add(std::shared_ptr<RenderObject> object) {
 }
 
 const void Scene::lighting() {
-	GLfloat lp1[4] = {10, 5, 10,  1};
-	GLfloat white[4] = {1.0f,  1.0f,  1.0f,  1.0f};
-	GLfloat ambient[4] = {0.3f,  0.3f,  0.3f,  1.0f};
+	GLfloat position[4] = {10, 5, 10,  1};
+	GLfloat ambient[4] = {1.0f,  1.0f,  1.0f,  1.0f};
+	GLfloat diffuse[4] = {0.5f,  0.5f,  0.5f,  1.0f};
+	GLfloat specular[4] = {1.0f,  1.0f,  1.0f,  1.0f};
 
-	glLightfv(GL_LIGHT1, GL_POSITION, lp1);
+	glLightfv(GL_LIGHT1, GL_POSITION, position);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE,  white);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE,  diffuse);
+	glLightfv(GL_LIGHT1, GL_SPECULAR,  specular);
 
-	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHTING);
 }
 
 const void Scene::setMaterialColor(GLfloat r, GLfloat g, GLfloat b) {
-	GLfloat dif[4] = {r, g, b, 1};
-	GLfloat amb[4] = {0.5f * r, 0.5f * g, 0.5f * b, 1.0f};
+	GLfloat ambient[4] = {r*0.5f, g*0.5f, b*0.5f, 1};
+	GLfloat diffuse[4] = {r, g, b, 1};
+	GLfloat specular[4] = {r*0.5f, g*0.5f, b*0.5f, 1};
 	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, dif);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
 }
 
 const void Scene::draw() {
@@ -56,6 +60,8 @@ const void Scene::draw() {
 
 	// Objects
 	glEnable(GL_RESCALE_NORMAL); // More efficient than GL_NORMALIZE
+
+	setMaterialColor(1, 0, 0);
 
 	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {

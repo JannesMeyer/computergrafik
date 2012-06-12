@@ -291,12 +291,14 @@ int main() {
 	// Scene setup
 	try {
 		// INITIALIZATION FUNCTION GOES HERE:
+
 		//initLab41();
 		//initLab51();
 		//initLab61();
 		//initLab62();
 		//initLab71();
 		initLab72();
+
 	} catch(std::exception& e) {
 		std::cout << e.what() << std::endl;
 		system("pause");
