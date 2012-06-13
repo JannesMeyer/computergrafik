@@ -43,7 +43,7 @@ void TriangleMesh::readFromFile(const std::string& filename) {
 		double x, y, z;
 		file >> x >> y >> z;
 		points.push_back(std::make_shared<Point>(x, y, z));
-		//points[i] = std::make_shared<Point>(x, y, z);
+		// Q: points[i] = std::make_shared<Point>(x, y, z);
 	}
 
 	// Read #triangles
@@ -108,7 +108,7 @@ void TriangleMesh::saveToFile(const std::string& filename) {
 }
 
 void TriangleMesh::draw() {
-	//glTranslatef(0, -2, 0);
+	glTranslatef(0, -2, 0);
 
 	// Scale factor for very small models
 	glScalef(scale, scale, scale);
@@ -117,7 +117,7 @@ void TriangleMesh::draw() {
 	glBegin(GL_TRIANGLES);
 	for (auto& t : triangles) {
 		std::shared_ptr<Point> p;
-		
+		//glNormal3d(t.normal.x, t.normal.y, t.normal.z);
 		p = t.points[0];
 		glNormal3d(p->normal.x, p->normal.y, p->normal.z);
 		glVertex3d(p->coord.x, p->coord.y, p->coord.z);

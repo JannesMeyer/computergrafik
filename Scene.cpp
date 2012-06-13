@@ -17,14 +17,14 @@ void Scene::add(std::shared_ptr<RenderObject> object) {
 
 const void Scene::lighting() {
 	GLfloat position[4] = {10, 5, 10,  1};
-	GLfloat ambient[4] = {1.0f,  1.0f,  1.0f,  1.0f};
-	GLfloat diffuse[4] = {0.5f,  0.5f,  0.5f,  1.0f};
-	GLfloat specular[4] = {1.0f,  1.0f,  1.0f,  1.0f};
+	GLfloat ambient[4] = {0.3f,  0.3f,  0.3f,  1.0f};
+	GLfloat diffuse[4] = {1.0f,  1.0f,  1.0f,  1.0f};
+	//GLfloat specular[4] = {1.0f,  1.0f,  1.0f,  1.0f};
 
 	glLightfv(GL_LIGHT1, GL_POSITION, position);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE,  diffuse);
-	glLightfv(GL_LIGHT1, GL_SPECULAR,  specular);
+	//glLightfv(GL_LIGHT1, GL_SPECULAR,  specular);
 
 	glEnable(GL_LIGHT1);
 	glEnable(GL_LIGHTING);
@@ -59,10 +59,9 @@ const void Scene::draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Objects
+	//glEnable(GL_NORMALIZE);
 	glEnable(GL_RESCALE_NORMAL); // More efficient than GL_NORMALIZE
-
-	setMaterialColor(1, 0, 0);
-
+	//setMaterialColor(1, 0, 0);
 	//gluSphere(gluNewQuadric(), 2, 50, 50);
 	for (auto& object : renderObjects) {
 		object->draw();
